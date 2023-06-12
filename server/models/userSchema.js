@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import sendEmail from "../utils/email.js";
 import ApiError from "../utils/ApiError.js";
+import bcrypt from "bcrypt";
 const userSchema = new Schema({
   name: {
     type: String,
