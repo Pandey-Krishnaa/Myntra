@@ -1,13 +1,22 @@
 import express, { json } from "express";
 import { config } from "dotenv";
-config({ path: "./utils/config.env" });
-const app = express();
-app.use(json());
-const port = process.env.PORT || 8000;
 import connectDb from "./utils/db.js";
 import ApiError from "./utils/ApiError.js";
 import userRouter from "./routes/userRoutes.js";
+import fileUpload from "express-fileupload";
+import cloudinary from "cloudinary";
+config({ path: "./utils/config.env" });
+const app = express();
+const port = process.env.PORT || 8000;
+app.use(json());
+app.use(fileUpload());
 connectDb();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 app.use("/api/v1/user", userRouter);
 

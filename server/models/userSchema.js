@@ -22,6 +22,14 @@ const userSchema = new Schema({
     required: [true, "email varification is required"],
     default: false,
   },
+  avatar: {
+    url: {
+      type: String,
+    },
+    public_id: {
+      type: String,
+    },
+  },
   otp: String,
   otpExpiration: Date,
 });

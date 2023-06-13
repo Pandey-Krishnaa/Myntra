@@ -5,10 +5,30 @@ import sendEmail from "../utils/email.js";
 import jwt from "jsonwebtoken";
 import generateOtp from "../utils/otpGenerator.js";
 import bcrypt from "bcrypt";
+import cloudinary from "cloudinary";
+import fs from "fs";
+
 export const signup = catchAsync(async (req, res, next) => {
+  const avatar = req.files.avatar;
   const { name, email, password } = req.body;
   const otp = generateOtp();
-  const user = await User.create({ name, email, password, otp });
+  const encryPassword = await bcrypt.hash(password, 12);
+  const user = await User.create({ name, email, password: encryPassword, otp });
+  if (avatar) {
+    // console.log(avatar);
+    const path = `./uploads/${Date.now()}${avatar.name}`;
+    avatar.mv(path, (err) => {
+      if (err) throw new Error("file couldn't uploaded");
+    });
+    console.log("uploading");
+    const uploadRes = await cloudinary.v2.uploader.upload(path);
+    user.avatar.url = uploadRes.secure_url;
+    user.avatar.public_id = uploadRes.public_id;
+    fs.unlink(path, (err) => {
+      if (err) throw new Error("something went wrong");
+      console.log("file deleted");
+    });
+  }
   const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/api/v1/user/verification/${user._id}`;
   const options = {
     email,
@@ -17,8 +37,6 @@ export const signup = catchAsync(async (req, res, next) => {
   };
   await sendEmail(options);
   user.otpExpiration = Date.now() + 10 * 60 * 1000;
-  user.password = await bcrypt.hash(password, 12);
-
   await user.save();
   console.log("email sent");
 
