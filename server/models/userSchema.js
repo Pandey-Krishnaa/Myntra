@@ -16,6 +16,7 @@ const userSchema = new Schema({
     type: String,
     required: [true, "password is required"],
     minLength: [8, "password should have atleast 8 characters"],
+    select: false,
   },
   isEmailVarified: {
     type: Boolean,

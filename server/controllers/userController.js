@@ -11,6 +11,8 @@ import fs from "fs";
 export const signup = catchAsync(async (req, res, next) => {
   const avatar = req.files.avatar;
   const { name, email, password } = req.body;
+  if (password?.length < 8)
+    return next(new ApiError(400, "password should have atleast 8 characters"));
   const otp = generateOtp();
   const encryPassword = await bcrypt.hash(password, 12);
   const user = await User.create({ name, email, password: encryPassword, otp });
@@ -55,7 +57,7 @@ export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password)
     return next(new ApiError(400, "enter your email or password"));
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
   const passwordMatched = await bcrypt.compare(password, user.password);
   if (!user || !passwordMatched)
     return next(new ApiError(400, "invalid cridential"));
@@ -115,4 +117,44 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   user.password = await bcrypt.hash(password, 12);
   await user.save();
   res.status(200).json({ message: "password changed successfully" });
+});
+
+export const changeAvatar = catchAsync(async (req, res, next) => {
+  const avatar = req.files?.avatar;
+  if (!avatar) return next(new ApiError(400, "please select a avatar"));
+  const user = await User.findById(req.user._id);
+  // deleting the previous avatar from cloudinary
+  if (user.avatar?.public_id)
+    await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+
+  // uploading new avatar
+  const path = `./uploads/${Date.now()}${avatar.name}`;
+  avatar.mv(path, (err) => {
+    if (err) throw new Error("file couldn't uploaded");
+  });
+  const uploadRes = await cloudinary.v2.uploader.upload(path);
+  user.avatar.url = uploadRes.secure_url;
+  user.avatar.public_id = uploadRes.public_id;
+  fs.unlink(path, (err) => {
+    if (err) throw new Error("something went wrong");
+  });
+  res.status(200).json({ message: "avatar uploaded" });
+});
+
+export const changePassword = catchAsync(async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword)
+    return next(new ApiError(400, "both feilds are required"));
+  const user = await User.findOne({ email: req.user.email }).select(
+    "+password"
+  );
+  if (!(await bcrypt.compare(oldPassword, user.password)))
+    return next(new ApiError(401, "incorrect password"));
+  if (newPassword.length < 8)
+    return next(new ApiError(400, "password should have atleast 8 characters"));
+  // hash the new password
+  const encryptedNewPassword = await bcrypt.hash(newPassword, 12);
+  user.password = encryptedNewPassword;
+  await user.save({ validateBeforeSave: false });
+  res.status(200).json({ message: "password changed" });
 });
