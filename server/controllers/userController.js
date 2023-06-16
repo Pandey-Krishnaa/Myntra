@@ -58,6 +58,7 @@ export const login = catchAsync(async (req, res, next) => {
   if (!email || !password)
     return next(new ApiError(400, "enter your email or password"));
   const user = await User.findOne({ email }).select("+password");
+  if (!user) return next(new ApiError(400, "invalid credential"));
   const passwordMatched = await bcrypt.compare(password, user.password);
   if (!user || !passwordMatched)
     return next(new ApiError(400, "invalid cridential"));
@@ -157,4 +158,19 @@ export const changePassword = catchAsync(async (req, res, next) => {
   user.password = encryptedNewPassword;
   await user.save({ validateBeforeSave: false });
   res.status(200).json({ message: "password changed" });
+});
+
+export const deleteMyAccount = catchAsync(async (req, res, next) => {
+  const email = req.body.email || req.user.email;
+  const password = req.body.password;
+  if (!email) return next(new ApiError(400, "enter your email"));
+  if (!password) return next(new ApiError(400, "enter your password"));
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) return next(new ApiError(404, "user does not exist"));
+  if (!(await bcrypt.compare(password, user.password)))
+    return next(new ApiError(401, "incorrect password"));
+  await User.findByIdAndDelete(user._id);
+  res.status(200).json({
+    message: "account deleted successfully",
+  });
 });

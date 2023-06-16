@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   changeAvatar,
   changePassword,
+  deleteMyAccount,
   forgetPassword,
   login,
   resetPassword,
@@ -18,7 +19,7 @@ router.route("/forget-password").post(forgetPassword);
 router.route("/reset-password/:email").post(resetPassword);
 router.route("/change-avatar").post(auth, changeAvatar);
 router.route("/change-password").post(auth, changePassword);
-
+router.route("/").delete(auth, deleteMyAccount);
 router.route("/protected").get(auth, (req, res, next) => {
   res.status(200).json({
     message: "protected",

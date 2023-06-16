@@ -14,4 +14,15 @@ const auth = async (req, res, next) => {
   }
   next();
 };
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role))
+      return next(new ApiError(401, "you can't access this route"));
+    if (!req.user.isEmailVarified)
+      return next(
+        new ApiError(400, "your email is not varified,go and verify it")
+      );
+    next();
+  };
+};
 export default auth;

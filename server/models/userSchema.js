@@ -31,6 +31,11 @@ const userSchema = new Schema({
       type: String,
     },
   },
+  role: {
+    type: String,
+    enum: ["naive", "admin"],
+    default: "naive",
+  },
   otp: String,
   otpExpiration: Date,
 });
