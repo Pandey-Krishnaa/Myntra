@@ -4,6 +4,7 @@ import connectDb from "./utils/db.js";
 import ApiError from "./utils/ApiError.js";
 import userRouter from "./routes/userRoutes.js";
 import productRoute from "./routes/productRoutes.js";
+import reviewRoute from "./routes/reviewRoutes.js";
 import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
 config({ path: "./utils/config.env" });
@@ -21,6 +22,7 @@ cloudinary.config({
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/review", reviewRoute);
 // handling the not defined routes
 app.all("*", (req, res, next) => {
   next(new ApiError(404, "route is not defined yet"));
