@@ -1,4 +1,3 @@
-import { populate } from "dotenv";
 import catchAsync from "../utils/catchAsync.js";
 import Product from "./../models/productSchema.js";
 import ApiError from "./../utils/ApiError.js";
@@ -111,9 +110,94 @@ export const getProductById = catchAsync(async (req, res, next) => {
   res.status(200).json({ product });
 });
 
-export const deleteProduct = catchAsync(async (req, res, next) => {
+export const updateProductDetails = catchAsync(async (req, res, next) => {
   const productId = req.params.id;
-  await Product.findOneAndDelete(productId);
+  let product = await Product.findById(productId);
+  if (!product) return next(new ApiError(404, "product does not exist"));
+  product.name = req.body.name || product.name;
+  product.description = req.body.description || product.description;
+  product.price = req.body.price || product.price;
+  product.category = req.body.category || product.category;
+  product.countInStock = req.body.countInStock || product.countInStock;
+  product = await product.save();
+  res.status(200).json({ product });
+});
+
+export const addImagesToProduct = catchAsync(async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) return next(new ApiError(404, "product does not exists"));
+  if (!req.files || !req.files.images)
+    return next(new ApiError(400, "no images to upload"));
+  const images = Array.isArray(req.files.images)
+    ? req.files.images
+    : [req.files.images];
+  const validFormats = ["jpg", "jpeg", "png"];
+  for (let image in images) {
+    if (images[image].size / 1024 ** 2 > 1.5)
+      return next(
+        new ApiError(
+          400,
+          `${images[image].name} should have size less than 1.5 mb.`
+        )
+      );
+    const nameArr = images[image].name.split(".");
+    if (!validFormats.includes(nameArr[nameArr.length - 1]))
+      return next(
+        new ApiError(
+          400,
+          `invalid format { ${images[image].name}}, only ${validFormats} are allowed`
+        )
+      );
+  }
+  const uploadToServerPromises = images.map((image) => {
+    return new Promise((resolve, reject) => {
+      const path = `./uploads/${Date.now()}${image.name}`;
+      image.mv(path, (err) => {
+        if (err) reject(err);
+        else resolve(path);
+      });
+    });
+  });
+  const paths = await Promise.all(uploadToServerPromises);
+  const uploadToCloudinaryPromises = paths.map((path) => {
+    return cloudinary.v2.uploader.upload(path);
+  });
+  const uploadedImages = await Promise.all(uploadToCloudinaryPromises);
+  paths.forEach((path) => {
+    fs.unlink(path, (err) => {
+      if (err) return next(new ApiError(500, "Something went wrong"));
+    });
+  });
+  uploadedImages.forEach((img) => {
+    const imgObj = { public_id: img.public_id, url: img.secure_url };
+    product.images.push(imgObj);
+  });
+  product = await product.save();
+  res.status(200).json(product);
+});
+
+export const deleteImageFromProduct = catchAsync(async (req, res, next) => {
+  const productId = req.params.productId;
+  let product = await Product.findById(productId);
+  if (!product) return next(new ApiError(404, "product does not exist"));
+  const imageId = req.params.imageId;
+  const updatedImages = product.images.filter((image) => {
+    return image.public_id !== imageId;
+  });
+  await cloudinary.v2.uploader.destroy(imageId);
+  product.images = updatedImages;
+  product = await product.save();
+  res.status(200).json({
+    product,
+  });
+});
+
+export const deleteProduct = catchAsync(async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) return next(new ApiError(404, "product does not exists"));
+  await Promise.all(
+    product.images.map((img) => cloudinary.v2.uploader.destroy(img.public_id))
+  );
   res.status(200).json({
     message: "product deleted",
   });
