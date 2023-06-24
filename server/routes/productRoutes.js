@@ -7,6 +7,7 @@ import {
   deleteProduct,
   getAllProduct,
   getProductById,
+  getStats,
   updateProductDetails,
 } from "../controllers/productController.js";
 const router = Router();
@@ -25,4 +26,6 @@ router
 router
   .route("/delete-image/:productId/:imageId")
   .delete(auth, restrictTo("admin"), deleteImageFromProduct);
+
+router.route("/stats/:type").get(getStats);
 export default router;

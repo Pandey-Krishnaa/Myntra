@@ -11,6 +11,14 @@ const userSchema = new Schema({
     type: String,
     unique: [true, "email should be unique"],
     required: [true, "email is required"],
+    validate: {
+      validator: function (value) {
+        if (!value.includes("@") || !value.includes(".") || value.length < 5)
+          return false;
+        return true;
+      },
+      message: "invalid email",
+    },
   },
   password: {
     type: String,

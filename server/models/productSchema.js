@@ -22,6 +22,16 @@ const productSchema = new Schema(
     category: {
       type: String,
       required: true,
+      enum: ["topwear", "bottomwear", "innerwear", "footwear"],
+    },
+    forWhom: {
+      type: String,
+      enum: ["men", "woman", "kid"],
+      required: [true, "for whom is required, it can be for men,women,kids"],
+    },
+    subCategory: {
+      type: String,
+      required: true,
     },
     images: [{ public_id: String, url: String }],
     countInStock: {
@@ -34,6 +44,14 @@ const productSchema = new Schema(
         },
         message: "stock count can't be less than 0",
       },
+    },
+    ratings: {
+      type: Number,
+      default: 0,
+    },
+    numberOfRatings: {
+      type: Number,
+      default: 0,
     },
     createdAt: {
       type: Date,

@@ -31,13 +31,23 @@ export const createProduct = catchAsync(async (req, res, next) => {
         )
       );
   }
-  const { name, description, price, category, countInStock } = req.body;
+  const {
+    name,
+    description,
+    price,
+    category,
+    countInStock,
+    forWhom,
+    subCategory,
+  } = req.body;
   const product = await Product.create({
     name,
     description,
     price,
     category,
     countInStock,
+    forWhom,
+    subCategory,
   });
 
   const uploadToServerPromises = images.map((image) => {
@@ -201,4 +211,25 @@ export const deleteProduct = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: "product deleted",
   });
+});
+
+export const getStats = catchAsync(async (req, res, next) => {
+  const type = req.params.type;
+
+  const categories = await Product.aggregate([
+    {
+      $group: {
+        _id: `$${type}`,
+        count: { $sum: 1 },
+        avgPrice: { $avg: "$price" },
+        maxPrice: {
+          $max: "$price",
+        },
+        minPrice: {
+          $min: "$price",
+        },
+      },
+    },
+  ]);
+  res.status(200).json({ categories });
 });

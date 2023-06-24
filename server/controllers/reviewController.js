@@ -16,3 +16,13 @@ export const createReview = catchAsync(async (req, res, next) => {
   });
   res.status(200).json({ review });
 });
+export const deleteReview = catchAsync(async (req, res, next) => {
+  const review = await Review.findById(req.params.reviewId);
+  if (!review) return next(new ApiError(404, "review does not exists"));
+  if (req.user._id !== toString(review.author) && req.user.role !== "admin")
+    return next(new ApiError(401, "you can't delete this review"));
+  await Review.findByIdAndDelete(req.params.re);
+  res.status(200).json({
+    message: "review deleted successfully",
+  });
+});

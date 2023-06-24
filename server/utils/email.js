@@ -1,6 +1,6 @@
 import { createTransport } from "nodemailer";
-import ApiError from "./ApiError.js";
-const sendEmail = async (options, next) => {
+
+const sendEmail = async (options, isEmailSent) => {
   try {
     const transporter = createTransport({
       host: process.env.SMTP_HOST_NAME,
@@ -19,8 +19,9 @@ const sendEmail = async (options, next) => {
     });
     console.log(info);
     console.log("email sent successfully");
+    isEmailSent = true;
   } catch (err) {
-    return next(new ApiError(500, "email couldn't send"));
+    isEmailSent = false;
   }
 };
 

@@ -7,6 +7,7 @@ import productRoute from "./routes/productRoutes.js";
 import reviewRoute from "./routes/reviewRoutes.js";
 import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
+import cors from "cors";
 config({ path: "./utils/config.env" });
 const app = express();
 const port = process.env.PORT || 8000;
@@ -19,7 +20,7 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
-
+app.use(cors());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/review", reviewRoute);
@@ -31,6 +32,7 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "something went wrong";
+
   res.status(err.statusCode).json({
     message: err.message,
   });

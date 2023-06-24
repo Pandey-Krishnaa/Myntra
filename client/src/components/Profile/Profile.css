@@ -1,0 +1,41 @@
+.profile {
+  min-height: 100vh;
+}
+.profile header {
+  padding: 15px;
+}
+
+.header_user_name {
+  text-transform: capitalize;
+}
+.profile_main {
+  display: flex;
+  padding: 15px;
+  width: 100%;
+}
+.profile_sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 15px 15px 0;
+  width: 20%;
+}
+
+.profile_detail {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-left: 2px solid black;
+}
+.profile table {
+  width: 100%;
+}
+td {
+  padding: 15px 25px 15px 0;
+}
+
+.profile_sidebar_links {
+  text-decoration: none;
+  padding-bottom: 10px;
+}

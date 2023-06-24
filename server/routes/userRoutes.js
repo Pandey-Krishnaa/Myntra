@@ -4,6 +4,7 @@ import {
   changePassword,
   deleteMyAccount,
   forgetPassword,
+  getLoggedInUser,
   login,
   resetPassword,
   signup,
@@ -12,6 +13,7 @@ import {
 import auth from "../middlewares/auth.js";
 
 const router = Router();
+router.route("/me").get(auth, getLoggedInUser);
 router.route("/signup").post(signup);
 router.route("/login").post(login);
 router.route("/verification/:id").post(verifyOtp);

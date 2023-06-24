@@ -1,0 +1,29 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  align-items: center;
+}
+.nav .nav_left .brand_logo {
+  width: 50px;
+}
+.nav .nav_right {
+  display: flex;
+  align-items: center;
+}
+.nav_right_searchbar input {
+  width: 300px;
+  padding: 10px 15px;
+  border: none;
+  background-color: #f5f5f6;
+  border-radius: 5px;
+}
+.nav .nav_right ul {
+  display: flex;
+  list-style: none;
+}
+
+.nav .nav_right ul a {
+  text-decoration: none;
+  padding: 10px 15px;
+}

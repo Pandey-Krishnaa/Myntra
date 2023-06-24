@@ -9,7 +9,8 @@ import cloudinary from "cloudinary";
 import fs from "fs";
 
 export const signup = catchAsync(async (req, res, next) => {
-  const avatar = req.files.avatar;
+  const avatar = req.files?.avatar;
+  if (!avatar) return next(new ApiError(400, "profile picture is required"));
   const { name, email, password } = req.body;
   if (password?.length < 8)
     return next(new ApiError(400, "password should have atleast 8 characters"));
@@ -37,7 +38,9 @@ export const signup = catchAsync(async (req, res, next) => {
     subject: "Myntra-Clone {email varification}",
     html: `<p style="text-align:justify;">Dear ${name},<br/>Your otp is ${otp}.Use it to verify your account<br/>If you didn't request this,simply ignore this message</p><br/><h1 style="text-align:center;">${otp}</h1><br/>Your's<br/>The Myntra Clone Team.`,
   };
-  await sendEmail(options);
+  let isEmailSent = false;
+  await sendEmail(options, isEmailSent);
+
   user.otpExpiration = Date.now() + 10 * 60 * 1000;
   await user.save();
   console.log("email sent");
@@ -47,7 +50,9 @@ export const signup = catchAsync(async (req, res, next) => {
   });
 
   res.status(201).json({
-    message: `varify your email, has sent on ${email}`,
+    message: isEmailSent
+      ? `varify your email, has sent on ${email}`
+      : "email couldn't sent ",
     token,
     url,
   });
@@ -65,7 +70,11 @@ export const login = catchAsync(async (req, res, next) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE_IN,
   });
-  res.status(200).json({ message: "logged in", token });
+  delete user.password;
+  res.status(200).json({ message: "logged in", token, user });
+});
+export const getLoggedInUser = catchAsync(async (req, res, next) => {
+  res.status(200).json({ user: req.user });
 });
 
 export const verifyOtp = catchAsync(async (req, res, next) => {
