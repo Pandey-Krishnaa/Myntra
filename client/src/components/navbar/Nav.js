@@ -50,12 +50,21 @@ const Nav = () => {
               </NavLink>
             </li>
           )}
-          <li>
-            <NavLink to="/wishlist">Wishlist</NavLink>
-          </li>
-          <li>
-            <NavLink to="/bag">Bag</NavLink>
-          </li>
+          {user?.user?.role === "naive" && (
+            <>
+              <li>
+                <NavLink to="/wishlist">Wishlist</NavLink>
+              </li>
+              <li>
+                <NavLink to="/bag">Bag</NavLink>
+              </li>
+            </>
+          )}
+          {user?.user?.role === "admin" && (
+            <li>
+              <NavLink to="/admin">Dashboard</NavLink>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

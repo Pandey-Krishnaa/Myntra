@@ -41,6 +41,7 @@ export default userAuthSlice.reducer;
 export function loginThunk(email, password) {
   return async function (dispatch, getState) {
     dispatch(setStatus({ status: "LOADING" }));
+    const toastId = toast.loading("LOGGING IN...");
     try {
       const jsonData = await fetch(process.env.REACT_APP_LOGIN_URL, {
         method: "POST",
@@ -63,6 +64,7 @@ export function loginThunk(email, password) {
       dispatch(setStatus({ status: "ERROR" }));
       dispatch(removeUser());
     }
+    toast.dismiss(toastId);
     dispatch(setStatus({ status: "IDLE" }));
   };
 }

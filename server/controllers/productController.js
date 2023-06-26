@@ -7,14 +7,17 @@ import User from "./../models/userSchema.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
 
 export const createProduct = catchAsync(async (req, res, next) => {
-  // validating images
   if (!req.files || !req.files.images)
     return next(new ApiError(400, "no images to upload"));
-  const images = Array.isArray(req.files.images)
-    ? req.files.images
-    : [req.files.images];
+  const images = Array.isArray(req.files["images"])
+    ? req.files["images"]
+    : [req.files["images"]];
+  if (images.length === 0)
+    return next(new ApiError(400, "no images to upload"));
   const validFormats = ["jpg", "jpeg", "png"];
+
   for (let image in images) {
+    console.log(images[image]);
     if (images[image].size / 1024 ** 2 > 1.5)
       return next(
         new ApiError(
@@ -31,15 +34,8 @@ export const createProduct = catchAsync(async (req, res, next) => {
         )
       );
   }
-  const {
-    name,
-    description,
-    price,
-    category,
-    countInStock,
-    forWhom,
-    subCategory,
-  } = req.body;
+  const { name, description, price, category, countInStock, forWhom } =
+    req.body;
   const product = await Product.create({
     name,
     description,
@@ -47,7 +43,6 @@ export const createProduct = catchAsync(async (req, res, next) => {
     category,
     countInStock,
     forWhom,
-    subCategory,
   });
 
   const uploadToServerPromises = images.map((image) => {
@@ -116,7 +111,7 @@ export const getProductById = catchAsync(async (req, res, next) => {
       select: "name avatar",
     },
   });
-
+  if (!product) return next(new ApiError(400, "no product found with this id"));
   res.status(200).json({ product });
 });
 

@@ -29,10 +29,6 @@ const productSchema = new Schema(
       enum: ["men", "woman", "kid"],
       required: [true, "for whom is required, it can be for men,women,kids"],
     },
-    subCategory: {
-      type: String,
-      required: true,
-    },
     images: [{ public_id: String, url: String }],
     countInStock: {
       type: Number,

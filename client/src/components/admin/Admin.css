@@ -1,0 +1,41 @@
+.admin {
+  display: flex;
+  padding: 15px;
+  width: 100%;
+  min-height: 100vh;
+  border-top: 0.1px solid black;
+  position: relative;
+}
+.admin_sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 15px 15px 0;
+  width: 20%;
+}
+.admin_sidebar_item {
+  display: flex;
+  flex-direction: column;
+}
+.admin_sidebar_item_heading {
+  color: black;
+  border-bottom: 0.1px solid gray;
+  padding-bottom: 5px;
+  margin: 15px 0;
+}
+
+.admin_main {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-left: 2px solid black;
+}
+.admin table {
+  width: 100%;
+}
+
+.admin_sidebar_links {
+  text-decoration: none;
+  padding-bottom: 10px;
+}
