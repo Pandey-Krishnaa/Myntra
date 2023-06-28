@@ -92,7 +92,7 @@ export function getUserByTokenThunk() {
   };
 }
 
-export function signupThunk(user) {
+export function signupThunk(user, navigateToVarificationPageHandler) {
   const form = new FormData();
   form.append("name", user.name);
   form.append("password", user.password);
@@ -113,6 +113,7 @@ export function signupThunk(user) {
       }
       localStorage.setItem("token", data.token);
       dispatch(getUserByTokenThunk());
+      navigateToVarificationPageHandler();
     } catch (err) {
       toast.error(err.message);
     }

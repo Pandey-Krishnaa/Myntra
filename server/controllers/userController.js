@@ -73,6 +73,7 @@ export const login = catchAsync(async (req, res, next) => {
   delete user.password;
   res.status(200).json({ message: "logged in", token, user });
 });
+
 export const getLoggedInUser = catchAsync(async (req, res, next) => {
   res.status(200).json({ user: req.user });
 });
@@ -81,6 +82,7 @@ export const verifyOtp = catchAsync(async (req, res, next) => {
   const userid = req.params.id;
   const user = await User.findById(userid);
   if (!user) return next(new ApiError(400, "invalid user id"));
+  console.log(req.body);
   const otp = req.body.otp;
   if (!otp) return next(new ApiError(400, "enter your otp"));
   if (otp * 1 !== user.otp * 1) return next(new ApiError(401, "incorrect otp"));
@@ -132,7 +134,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 export const changeAvatar = catchAsync(async (req, res, next) => {
   const avatar = req.files?.avatar;
   if (!avatar) return next(new ApiError(400, "please select a avatar"));
-  const user = await User.findById(req.user._id);
+  let user = await User.findById(req.user._id);
   // deleting the previous avatar from cloudinary
   if (user.avatar?.public_id)
     await cloudinary.v2.uploader.destroy(user.avatar.public_id);
@@ -145,10 +147,11 @@ export const changeAvatar = catchAsync(async (req, res, next) => {
   const uploadRes = await cloudinary.v2.uploader.upload(path);
   user.avatar.url = uploadRes.secure_url;
   user.avatar.public_id = uploadRes.public_id;
+  user = await user.save();
   fs.unlink(path, (err) => {
     if (err) throw new Error("something went wrong");
   });
-  res.status(200).json({ message: "avatar uploaded" });
+  res.status(200).json({ message: "avatar uploaded", user });
 });
 
 export const changePassword = catchAsync(async (req, res, next) => {

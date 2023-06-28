@@ -104,7 +104,7 @@ export const getAllProduct = catchAsync(async (req, res, next) => {
 export const getProductById = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id).populate({
     path: "reviews",
-    select: "title author rating -product",
+    select: "title author rating product",
     populate: {
       path: "author",
       model: User,

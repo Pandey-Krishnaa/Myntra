@@ -4,6 +4,7 @@ import Product from "./../models/productSchema.js";
 import ApiError from "../utils/ApiError.js";
 export const createReview = catchAsync(async (req, res, next) => {
   let { title, rating } = req.body;
+  console.log(req.body);
   if (!title) title = "no title";
   const productId = req.params.productId;
   const product = await Product.findById(productId);
@@ -14,14 +15,22 @@ export const createReview = catchAsync(async (req, res, next) => {
     author: req.user._id,
     product: product._id,
   });
+  console.log(review);
   res.status(200).json({ review });
 });
 export const deleteReview = catchAsync(async (req, res, next) => {
+  // console.log("called");
   const review = await Review.findById(req.params.reviewId);
+  // console.log(req.user._id);
+  // console.log(review.author);
+  // console.log(req.user.role);
   if (!review) return next(new ApiError(404, "review does not exists"));
-  if (req.user._id !== toString(review.author) && req.user.role !== "admin")
+  if (
+    toString(req.user._id) !== toString(review.author) &&
+    req.user.role !== "admin"
+  )
     return next(new ApiError(401, "you can't delete this review"));
-  await Review.findByIdAndDelete(req.params.re);
+  await Review.findByIdAndDelete(req.params.reviewId);
   res.status(200).json({
     message: "review deleted successfully",
   });

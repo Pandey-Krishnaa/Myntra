@@ -1,0 +1,15 @@
+.cart_total_feild {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #ff3f6c;
+  padding: 15px;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+}
+.card_wrapper {
+  position: relative;
+}

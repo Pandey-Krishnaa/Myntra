@@ -1,0 +1,39 @@
+.review_modal_wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: black;
+  z-index: 11111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.review_modal_container {
+  background-color: white;
+  min-width: 500px;
+  padding: 10px 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  border-radius: 15px;
+}
+
+.review_modal_input {
+  width: 100%;
+  padding: 10px;
+}
+.review_modal_close_btn_wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.review_modal_close_btn {
+  color: black;
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+}

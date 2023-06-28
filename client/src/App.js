@@ -16,10 +16,14 @@ import Admin from "./components/admin/Admin";
 import AllOrders from "./components/admin/AllOrders";
 import ProductForm from "./components/admin/ProductForm";
 import AllProducts from "./components/admin/AllProducts";
-import ProductCard from "./components/products/ProductCard";
+
 import Products from "./components/products/Products";
 import { getAllProductThunk } from "./store/productsSlice";
 import ProductDetails from "./components/products/ProductDetails";
+import { loadCart } from "./store/cartSlice";
+import Cart from "./components/cart/Cart";
+import SearchResult from "./components/searchResults/SearchResult";
+import OtpVarification from "./components/auth/OtpVarification";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -27,6 +31,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
+      { path: "signup", element: <SignUp /> },
       {
         path: "profile",
         element: <Profile />,
@@ -41,7 +46,10 @@ const router = createBrowserRouter([
           },
         ],
       },
-      { path: "signup", element: <SignUp /> },
+      {
+        path: "verification",
+        element: <OtpVarification />,
+      },
       {
         path: "products/",
         element: <Products />,
@@ -51,6 +59,14 @@ const router = createBrowserRouter([
         path: "products/:id",
         element: <ProductDetails />,
         errorElement: <h1>error</h1>,
+      },
+      {
+        path: "bag",
+        element: <Cart />,
+      },
+      {
+        path: "search/:keyword",
+        element: <SearchResult />,
       },
     ],
   },
@@ -69,6 +85,7 @@ function App() {
   useEffect(() => {
     dispatch(getUserByTokenThunk());
     dispatch(getAllProductThunk());
+    dispatch(loadCart());
   }, [dispatch]);
 
   return <RouterProvider router={router} />;

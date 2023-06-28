@@ -1,3 +1,29 @@
 .card {
   margin: 15px;
+  border: none;
+  background-color: #f5f5f6;
+  border-radius: 0;
+}
+.product_card_img {
+  padding: 25px;
+}
+.card-title {
+  text-align: center;
+}
+.card-text {
+  text-align: center;
+}
+.product_card_add_to_cart_btn {
+  border: none;
+  background-color: #ff3f6c;
+  padding: 15px 20px;
+  color: white;
+}
+.card:hover {
+  transform: scale(1.01);
+  box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.75);
+  transition: 0.2s all;
+  background-color: transparent;
 }

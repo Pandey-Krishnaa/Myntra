@@ -9,7 +9,7 @@ function ProfileDetails() {
       <table>
         <tr className="profile_avatar_cell">
           <img
-            src={user.user.avatar.url}
+            src={user?.user?.avatar?.url}
             width="100px"
             className="profile_avatar"
           />

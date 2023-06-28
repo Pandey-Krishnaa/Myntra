@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import "./SignUp.css";
 import { signupThunk } from "../../store/userAuthSlice";
@@ -13,7 +13,10 @@ function SignUp() {
   });
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.user?.isAuthenticated);
-
+  const navigate = useNavigate();
+  const navigateToVarificationPageHandler = () => {
+    navigate("/verification");
+  };
   return isLoggedIn ? (
     <Navigate to="/profile" />
   ) : (
@@ -22,7 +25,7 @@ function SignUp() {
         className="signup_form "
         onSubmit={(e) => {
           e.preventDefault();
-          dispatch(signupThunk(user));
+          dispatch(signupThunk(user, navigateToVarificationPageHandler));
         }}
       >
         <h1 className="signup_heading">SIGNUP</h1>

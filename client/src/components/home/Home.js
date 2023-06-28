@@ -1,26 +1,27 @@
 import React from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from "react-responsive-carousel";
+import { useSelector } from "react-redux";
+import ProductCard from "./../products/ProductCard";
+import "./Home.css";
 function Home() {
+  const products = useSelector((state) => state?.product?.products);
   return (
     <div className="home">
-      <Carousel
-        autoPlay={true}
-        interval={3000}
-        infiniteLoop={true}
-        showThumbs={false}
-      >
-        <div>
-          <img src="https://images.pexels.com/photos/4890259/pexels-photo-4890259.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
+      <div className="home_banner">
+        <div className="home_banner_tagline">
+          <h1 className="home_banner_tagline_text">
+            Get Best Fashion Product.
+            <br />
+          </h1>
+          <h1>Promise.</h1>
         </div>
-        <div>
-          <img src="https://images.pexels.com/photos/3170635/pexels-photo-3170635.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-        </div>
-        <div>
-          <img src="https://images.pexels.com/photos/1933873/pexels-photo-1933873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-        </div>
-      </Carousel>
-      <h1 style={{ textAlign: "center" }}>Top Selling Products</h1>
+      </div>
+      <h3 style={{ textAlign: "center" }}>Featured Products</h3>
+      <div className="home_products">
+        {products?.map((product) => (
+          <ProductCard product={product} key={product?._id} />
+        ))}
+      </div>
     </div>
   );
 }

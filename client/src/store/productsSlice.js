@@ -78,7 +78,7 @@ export function getAllProductThunk() {
         method: "get",
       });
       const data = await res.json();
-      console.log(data);
+
       dispatch(addProducts({ products: data.products }));
     } catch (err) {
       console.log(err);

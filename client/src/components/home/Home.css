@@ -1,0 +1,27 @@
+.home_banner {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://images.pexels.com/photos/1130625/pexels-photo-1130625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+}
+.home_banner_tagline {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.445);
+  color: white;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 25px;
+}
+.home_products {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+}
