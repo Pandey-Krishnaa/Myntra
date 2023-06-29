@@ -20,19 +20,12 @@
   width: 20%;
 }
 
-.profile_detail {
+.profile_outlet_wrapper {
   width: 80%;
   display: flex;
-  justify-content: center;
+  height: 100%;
   align-items: center;
-  padding: 20px;
-  border-left: 2px solid black;
-}
-.profile table {
-  width: 100%;
-}
-td {
-  padding: 15px 25px 15px 0;
+  justify-content: center;
 }
 
 .profile_sidebar_links {

@@ -8,6 +8,7 @@ import {
   login,
   resetPassword,
   signup,
+  updateUser,
   verifyOtp,
 } from "../controllers/userController.js";
 import auth from "../middlewares/auth.js";
@@ -21,10 +22,6 @@ router.route("/forget-password").post(forgetPassword);
 router.route("/reset-password/:email").post(resetPassword);
 router.route("/change-avatar").post(auth, changeAvatar);
 router.route("/change-password").post(auth, changePassword);
-router.route("/").delete(auth, deleteMyAccount);
-router.route("/protected").get(auth, (req, res, next) => {
-  res.status(200).json({
-    message: "protected",
-  });
-});
+router.route("/").delete(auth, deleteMyAccount).post(auth, updateUser);
+
 export default router;

@@ -8,7 +8,7 @@ function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.user?.isAuthenticated);
-  if (isLoggedIn) return <Navigate to="/profile" />;
+  if (isLoggedIn) return <Navigate to="/" />;
   else
     return (
       <div className="login_wrapper">

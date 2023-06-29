@@ -9,12 +9,22 @@ export const createReview = catchAsync(async (req, res, next) => {
   const productId = req.params.productId;
   const product = await Product.findById(productId);
   if (!product) return next(new ApiError(400, "product does not exist"));
-  const review = await Review.create({
-    title,
-    rating,
+  let review = await Review.findOne({
     author: req.user._id,
-    product: product._id,
+    product: productId,
   });
+  if (review) {
+    review.title = title;
+    review.rating = rating;
+    review = await review.save();
+  } else {
+    review = await Review.create({
+      title,
+      rating,
+      author: req.user._id,
+      product: product._id,
+    });
+  }
   console.log(review);
   res.status(200).json({ review });
 });

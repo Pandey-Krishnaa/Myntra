@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import ProductCard from "./../products/ProductCard";
 import "./Home.css";
 function Home() {
-  const products = useSelector((state) => state?.product?.products);
+  const products = useSelector((state) => state?.products?.products);
   return (
     <div className="home">
       <div className="home_banner">

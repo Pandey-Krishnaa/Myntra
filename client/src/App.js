@@ -24,6 +24,9 @@ import { loadCart } from "./store/cartSlice";
 import Cart from "./components/cart/Cart";
 import SearchResult from "./components/searchResults/SearchResult";
 import OtpVarification from "./components/auth/OtpVarification";
+import ProfileUpdate from "./components/Profile/ProfileUpdate";
+import ChangePassword from "./components/Profile/ChangePassword";
+import ForgetPassword from "./components/Profile/ForgetPassword";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,6 +35,7 @@ const router = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+
       {
         path: "profile",
         element: <Profile />,
@@ -44,12 +48,18 @@ const router = createBrowserRouter([
             path: "change-profile",
             element: <ChangeProfile />,
           },
+          {
+            path: "edit-profile",
+            element: <ProfileUpdate />,
+          },
         ],
       },
       {
-        path: "verification",
+        path: "/verify",
         element: <OtpVarification />,
       },
+      { path: "/change-password", element: <ChangePassword /> },
+      { path: "/forget", element: <ForgetPassword /> },
       {
         path: "products/",
         element: <Products />,

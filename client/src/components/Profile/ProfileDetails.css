@@ -1,0 +1,6 @@
+.profile_detail_wrapper tr {
+  width: 100%;
+}
+.profile_detail_wrapper table .profile_details_record_row {
+  width: 500px;
+}

@@ -41,4 +41,5 @@ reviewSchema.statics.calcRatings = async function (productId) {
 reviewSchema.post("save", async function () {
   this.constructor.calcRatings(this.product);
 });
+
 export default model("Review", reviewSchema);

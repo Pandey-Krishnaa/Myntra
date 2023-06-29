@@ -4,7 +4,7 @@ import ProductCard from "./ProductCard";
 import "./Products.css";
 import Loader from "../Loader";
 function Products() {
-  const productState = useSelector((state) => state.product);
+  const productState = useSelector((state) => state.products);
   return productState.status === "LOADING" ? (
     <Loader />
   ) : (

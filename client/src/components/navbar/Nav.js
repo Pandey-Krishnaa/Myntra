@@ -54,7 +54,7 @@ const Nav = () => {
 
           {user?.isAuthenticated && (
             <li>
-              <NavLink to="/profile">Profile</NavLink>
+              <NavLink to="/profile/overview">Profile</NavLink>
             </li>
           )}
           {user?.isAuthenticated && (
@@ -73,7 +73,7 @@ const Nav = () => {
           {user?.user?.role === "naive" && (
             <li>
               <NavLink to="/bag">
-                <i class="fa-solid fa-cart-shopping"></i>
+                <i className="fa-solid fa-cart-shopping"></i>
               </NavLink>
               <span>{bag.length === 0 ? "" : bag.length}</span>
             </li>

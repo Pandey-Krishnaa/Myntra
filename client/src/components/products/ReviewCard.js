@@ -1,34 +1,12 @@
 import React from "react";
 import ReactStars from "react-stars";
 import "./ReviewCard.css";
-import { toast } from "react-hot-toast";
+
+import { useDispatch } from "react-redux";
+import { deleteReviewThunk } from "../../store/productSlice";
 
 function ReviewCard({ review, userId }) {
-  const deleteReviewHandler = async () => {
-    const res = window.confirm("Do you want to delete your review ?");
-    if (!res) return;
-    console.log();
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_REVIEW_ROOT_URL}/${review._id}`,
-        {
-          method: "delete",
-          headers: {
-            "x-auth-token": localStorage.getItem("token"),
-          },
-        }
-      );
-      const data = await res.json();
-      console.log(data);
-      if (!res.ok) throw Error("something went wrong");
-      console.log(res);
-
-      toast.success("review deleted");
-      window.location.reload();
-    } catch (err) {
-      toast.error("something went wrong");
-    }
-  };
+  const dispatch = useDispatch();
   return (
     <div className="review_card">
       <header className="revier_card_header">
@@ -56,7 +34,8 @@ function ReviewCard({ review, userId }) {
             className="delete_review_btn btn btn-danger"
             onClick={(e) => {
               e.preventDefault();
-              deleteReviewHandler();
+              console.log(review);
+              dispatch(deleteReviewThunk(review?.product, review?._id));
             }}
           >
             Delete Review

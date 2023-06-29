@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import ReactStars from "react-stars";
 import "./ReviewModal.css";
 import { Toaster, toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { postReviewThunk } from "../../store/productSlice";
 function ReviewModal({ onClickHandler, product_id }) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
@@ -9,37 +11,14 @@ function ReviewModal({ onClickHandler, product_id }) {
   const backdropClickHandler = (e) => {
     if (e.target.className === "review_modal_wrapper") onClickHandler();
   };
-  const reviewSubmitHandler = async (review, rating) => {
+  const dispatch = useDispatch();
+  const reviewSubmitHandler = async (review, rating, onClickHandler) => {
     setLoading(true);
     const toastId = toast.loading("submitting review");
     console.log(process.env.REACT_APP_REVIEW_ROOT_URL);
-    try {
-      const reviewInfo = { title: review, rating };
-      console.log(reviewInfo);
-      const res = await fetch(
-        `${process.env.REACT_APP_REVIEW_ROOT_URL}/${product_id}`,
-        {
-          method: "post",
-
-          headers: {
-            "x-auth-token": localStorage.getItem("token"),
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify(reviewInfo),
-        }
-      );
-      const data = await res.json();
-      console.log(data.message);
-      if (!res.ok) {
-        console.log(data.message);
-        throw Error(data.message);
-      }
-      console.log(data);
-      window.location.reload();
-    } catch (err) {
-      toast.error(err.message);
-    }
+    dispatch(
+      postReviewThunk({ title: review, rating }, product_id, onClickHandler)
+    );
     setLoading(false);
     toast.dismiss(toastId);
   };
@@ -84,7 +63,7 @@ function ReviewModal({ onClickHandler, product_id }) {
           className="btn btn-success"
           onClick={(e) => {
             e.preventDefault();
-            reviewSubmitHandler(review, rating);
+            reviewSubmitHandler(review, rating, onClickHandler);
           }}
         >
           Submit

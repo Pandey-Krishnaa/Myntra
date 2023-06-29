@@ -9,6 +9,7 @@ import cloudinary from "cloudinary";
 import fs from "fs";
 
 export const signup = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const avatar = req.files?.avatar;
   if (!avatar) return next(new ApiError(400, "profile picture is required"));
   const { name, email, password } = req.body;
@@ -25,11 +26,11 @@ export const signup = catchAsync(async (req, res, next) => {
     });
     console.log("uploading");
     const uploadRes = await cloudinary.v2.uploader.upload(path);
+    console.log(uploadRes);
     user.avatar.url = uploadRes.secure_url;
     user.avatar.public_id = uploadRes.public_id;
     fs.unlink(path, (err) => {
       if (err) throw new Error("something went wrong");
-      console.log("file deleted");
     });
   }
   const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/api/v1/user/verification/${user._id}`;
@@ -55,6 +56,7 @@ export const signup = catchAsync(async (req, res, next) => {
       : "email couldn't sent ",
     token,
     url,
+    user,
   });
 });
 
@@ -80,7 +82,7 @@ export const getLoggedInUser = catchAsync(async (req, res, next) => {
 
 export const verifyOtp = catchAsync(async (req, res, next) => {
   const userid = req.params.id;
-  const user = await User.findById(userid);
+  let user = await User.findById(userid);
   if (!user) return next(new ApiError(400, "invalid user id"));
   console.log(req.body);
   const otp = req.body.otp;
@@ -91,21 +93,32 @@ export const verifyOtp = catchAsync(async (req, res, next) => {
   user.otp = undefined;
   user.otpExpiration = undefined;
   user.isEmailVarified = true;
-  await user.save({ validateBeforeSave: false });
+  user = await user.save({ validateBeforeSave: false });
   res.status(200).json({
     message: "email verified successfully",
+    user,
   });
 });
 
 export const forgetPassword = catchAsync(async (req, res, next) => {
-  const { email } = req.body;
+  const { email, subject } = req.body;
   const user = await User.findOne({ email });
   if (!user) return next(new ApiError(400, "invalid email"));
   const otp = generateOtp();
+  let html = "";
+  let emailSubject = "";
+  if (subject === "emailVerification") {
+    html = `<p style="text-align:justify;">Dear ${user.name},<br/>Your otp is ${otp}.Use it to verify your email<br/>If you didn't request this,simply ignore this message</p><br/><h1 style="text-align:center;">${otp}</h1><br/>Your's<br/>The Myntra Clone Team.`;
+    emailSubject = "Email Verification OTP {Myntra}";
+  }
+  if (subject === "resetPassword") {
+    html = `<p style="text-align:justify;">Dear ${user.name},<br/>Your otp is ${otp}.Use it to reset your passwrod<br/>If you didn't request this,simply ignore this message</p><br/><h1 style="text-align:center;">${otp}</h1><br/>Your's<br/>The Myntra Clone Team.`;
+    emailSubject = "Reset Password OTP {Myntra}";
+  }
   const options = {
+    subject: emailSubject,
     email,
-    subject: "Myntra-Clone {Reset Password OTP}",
-    html: `<p style="text-align:justify;">Dear ${user.name},<br/>Your otp is ${otp}.Use it to change your password<br/>If you didn't request this,simply ignore this message</p><br/><h1 style="text-align:center;">${otp}</h1><br/>Your's<br/>The Myntra Clone Team.`,
+    html,
   };
   await sendEmail(options);
   user.otp = otp;
@@ -147,15 +160,17 @@ export const changeAvatar = catchAsync(async (req, res, next) => {
   const uploadRes = await cloudinary.v2.uploader.upload(path);
   user.avatar.url = uploadRes.secure_url;
   user.avatar.public_id = uploadRes.public_id;
+  console.log(path);
   user = await user.save();
   fs.unlink(path, (err) => {
-    if (err) throw new Error("something went wrong");
+    if (err) console.log(err.message);
   });
   res.status(200).json({ message: "avatar uploaded", user });
 });
 
 export const changePassword = catchAsync(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
+  console.log(oldPassword, newPassword);
   if (!oldPassword || !newPassword)
     return next(new ApiError(400, "both feilds are required"));
   const user = await User.findOne({ email: req.user.email }).select(
@@ -163,6 +178,8 @@ export const changePassword = catchAsync(async (req, res, next) => {
   );
   if (!(await bcrypt.compare(oldPassword, user.password)))
     return next(new ApiError(401, "incorrect password"));
+  if (await bcrypt.compare(newPassword, user.password))
+    return next(new ApiError(400, "both password are same"));
   if (newPassword.length < 8)
     return next(new ApiError(400, "password should have atleast 8 characters"));
   // hash the new password
@@ -185,4 +202,12 @@ export const deleteMyAccount = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: "account deleted successfully",
   });
+});
+
+export const updateUser = catchAsync(async (req, res, next) => {
+  let user = await User.findById(req.user._id);
+  if (!user) return next(new ApiError(404, "user does not exists"));
+  user.name = req.body.name;
+  user = await user.save();
+  res.status(200).json({ user });
 });

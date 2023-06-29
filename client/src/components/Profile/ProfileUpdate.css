@@ -1,0 +1,10 @@
+.edit_done_btn {
+  border: none;
+  background-color: transparent;
+  font-size: 1.5rem;
+}
+.profile_update_record {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}

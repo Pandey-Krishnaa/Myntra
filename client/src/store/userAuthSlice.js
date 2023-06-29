@@ -27,17 +27,22 @@ const userAuthSlice = createSlice({
         user: null,
         status: "IDLE",
         token: null,
+        err: null,
       };
     },
     setAuth(state, action) {
       return { ...state, isAuthenticated: action.payload.isAuthenticated };
     },
+    setError(state, action) {
+      return { ...state, err: action.payload.err };
+    },
   },
 });
 
-export const { setStatus, setUser, setAuth, removeUser, setToken } =
+export const { setStatus, setUser, setAuth, removeUser, setToken, setError } =
   userAuthSlice.actions;
 export default userAuthSlice.reducer;
+
 export function loginThunk(email, password) {
   return async function (dispatch, getState) {
     dispatch(setStatus({ status: "LOADING" }));
@@ -85,14 +90,16 @@ export function getUserByTokenThunk() {
       const data = await jsonData.json();
       dispatch(setAuth({ isAuthenticated: true }));
       dispatch(setUser({ user: data.user }));
+      dispatch(setToken({ token }));
     } catch (err) {
-      dispatch(removeUser());
+      console.log(err.message);
+      // dispatch(removeUser());
     }
     dispatch(setStatus({ status: "IDLE" }));
   };
 }
 
-export function signupThunk(user, navigateToVarificationPageHandler) {
+export function signupThunk(user) {
   const form = new FormData();
   form.append("name", user.name);
   form.append("password", user.password);
@@ -112,8 +119,9 @@ export function signupThunk(user, navigateToVarificationPageHandler) {
         throw new Error(data.message);
       }
       localStorage.setItem("token", data.token);
-      dispatch(getUserByTokenThunk());
-      navigateToVarificationPageHandler();
+      dispatch(setUser({ user: data.user }));
+      dispatch(setAuth({ isAuthenticated: true }));
+      dispatch(setToken({ token: data.token }));
     } catch (err) {
       toast.error(err.message);
     }
@@ -121,3 +129,173 @@ export function signupThunk(user, navigateToVarificationPageHandler) {
     toast.dismiss(id);
   };
 }
+
+export const emailVerificationThunk = (otp, userId) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    const toastId = toast.loading("verifying your otp");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_EMAIL_VARIFICATION}${userId}`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ otp }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+      dispatch(setUser({ user: data.user }));
+      toast.dismiss(toastId);
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.message);
+      setError({ err });
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const sendOtpEmailHandler = (email, purpose) => {
+  // purpose = either {resetPassword} or {emailVerification}
+  return async function (dispatch) {
+    let toastId = toast.loading("sending email....");
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(`${process.env.REACT_APP_FORGET_PASSWORD_URL}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ email, subject: purpose }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.dismiss(toastId);
+      toast.success(data.message);
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("something went wrong");
+      setError({ err });
+    }
+
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const resetPasswordThunk = (info, email) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    const toastId = toast.loading("settingup your new password...");
+    console.log(`${process.env.REACT_APP_RESET_PASSWORD_URL}${email}`);
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_RESET_PASSWORD_URL}${email}`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify(info),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.dismiss(toastId);
+      toast.success(data.message);
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.message);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export function changeProfieThunk(formData) {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    const toastId = toast.loading("Updating Profile..");
+    try {
+      const res = await fetch(`${process.env.REACT_APP_CHANGE_AVATAR_URL}`, {
+        method: "post",
+        headers: {
+          "x-auth-token": localStorage.getItem("token"),
+        },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      dispatch(setUser({ user: data.user }));
+      toast.dismiss(toastId);
+      toast.success("profile updated");
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.message);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+}
+
+export function updateProfileInfo(info) {
+  return async function (dispatch) {
+    const toastId = toast.loading("Updating your info ..");
+    console.log(info);
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(`${process.env.REACT_APP_UPDATE_USER}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify(info),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      dispatch(setUser({ user: data.user }));
+      toast.dismiss(toastId);
+      toast.success("information updated");
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.message);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+}
+
+export const changePasswordThunk = (info, clearFeilds) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    console.log(info);
+    const toastId = toast.loading("changing password...");
+    try {
+      const res = await fetch(process.env.REACT_APP_CHANGE_PASSWORD_URL, {
+        method: "post",
+        headers: {
+          "x-auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(info),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+      toast.dismiss(toastId);
+      toast.success("password changed...");
+      clearFeilds();
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.message);
+      clearFeilds();
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};

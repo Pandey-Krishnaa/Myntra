@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import ReviewCard from "./ReviewCard";
 import { addToCart, loadCart } from "../../store/cartSlice";
 import ReviewModal from "./ReviewModal";
+import { fetchProductThunk, loop } from "../../store/productSlice";
 function ProductDetails() {
   const params = useParams();
-  const [product, setProduct] = useState(null);
+
   const [err, setErr] = useState(null);
   const userState = useSelector((state) => state.user);
+  const product = useSelector((state) => state.product.product);
   const [isValidToWriteReview, setIsValidToWriteReview] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productQuantity, setProductQuantity] = useState(1);
@@ -21,27 +23,8 @@ function ProductDetails() {
     setShowReviewModal(!showReviewModal);
   };
   useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_GET_ALL_PRODUCTS_URL}/${params.id}`
-        );
-        const data = await res.json();
-        console.log(data);
-        if (!res.ok) throw new Error(data.message);
-        if (data.product) {
-          for (let i = 0; i < data.product.reviews.length; i++) {
-            if (data?.product?.reviews[i]?.author?._id === userState?.user?._id)
-              setIsValidToWriteReview(false);
-          }
-        }
-        setProduct(data.product);
-      } catch (err) {
-        setErr(err);
-      }
-    }
-    fetchProduct();
-  }, [params, userState?.user?._id]);
+    dispatch(fetchProductThunk(params.id));
+  }, [params]);
 
   if (err) return <h1>{err.message}</h1>;
   if (!product) return <Loader />;

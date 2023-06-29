@@ -11,7 +11,7 @@ function Profile() {
       <div className="profile">
         <header>
           <h1>Account</h1>
-          <p className="header_user_name">{user.user.name}</p>
+          <p className="header_user_name">{user?.user?.name}</p>
         </header>
         <hr />
         <section className="profile_main">
@@ -26,8 +26,13 @@ function Profile() {
             <Link className="profile_sidebar_links" to="change-profile">
               Change Profile Picture
             </Link>
+            <Link className="profile_sidebar_links" to="/change-password">
+              Change Password
+            </Link>
           </div>
-          <Outlet />
+          <div className="profile_outlet_wrapper">
+            <Outlet />
+          </div>
         </section>
       </div>
     );
