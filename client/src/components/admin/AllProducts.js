@@ -8,7 +8,7 @@ function AllProducts() {
   useEffect(() => {
     dispatch(getAllProductThunk());
   }, [dispatch]);
-  const product = useSelector((state) => state.product);
+  const products = useSelector((state) => state.products);
   return (
     <div className="all_products_wrapper">
       <table className="table table-striped product_record_table">
@@ -22,18 +22,20 @@ function AllProducts() {
             <th>Ratings</th>
           </tr>
         </thead>
-        {product?.products.map((product, i) => (
-          <tr key={product._id}>
-            <td className="product_cells">{i + 1}</td>
-            <td>
-              <Link to={`/products/${product._id}`}>{product._id}</Link>
-            </td>
-            <td>{product.name}</td>
-            <td className="product_cells">{product.price}</td>
-            <td className="product_cells">{product.countInStock}</td>
-            <td className="product_cells">{product.ratings}</td>
-          </tr>
-        ))}
+        <tbody>
+          {products?.products?.map((product, i) => (
+            <tr key={product._id}>
+              <td className="product_cells">{i + 1}</td>
+              <td>
+                <Link to={`/products/${product._id}`}>{product._id}</Link>
+              </td>
+              <td>{product.name}</td>
+              <td className="product_cells">{product.price}</td>
+              <td className="product_cells">{product.countInStock}</td>
+              <td className="product_cells">{product.ratings}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );

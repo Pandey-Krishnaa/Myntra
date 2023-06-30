@@ -1,6 +1,28 @@
 .products {
   display: flex;
+  width: 100vw%;
+}
+
+.products_sidebar {
+  width: 20%;
+  padding: 25px;
+}
+.product_wrapper {
+  width: 80%;
+  display: flex;
   flex-wrap: wrap;
+  height: 100vh;
+  overflow-y: scroll;
+}
+.products_container {
+  display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: space-evenly;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.category_container,
+.forWhom_container {
+  display: flex;
+  align-items: center;
 }

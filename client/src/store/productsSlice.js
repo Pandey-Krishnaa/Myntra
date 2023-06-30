@@ -4,6 +4,11 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     status: "IDLE",
+    searchQuery: "",
+    category: "",
+    forWhom: "",
+    priceRange: [0, 25000],
+    ratingRange: [0, 5],
     products: [],
   },
   reducers: {
@@ -17,14 +22,39 @@ const productSlice = createSlice({
       };
     },
     addProducts(state, action) {
+      console.log(action.payload.products);
       return {
         ...state,
         products: [...action.payload.products],
       };
     },
+    setSearchQuery(state, action) {
+      return { ...state, searchQuery: action.payload.query };
+    },
+    setCategory(state, action) {
+      return { ...state, category: action.payload.category };
+    },
+    setForWhom(state, action) {
+      return { ...state, forWhom: action.payload.forWhom };
+    },
+    setPriceRange(state, action) {
+      return { ...state, priceRange: action.payload.range };
+    },
+    setRatingRange(state, action) {
+      return { ...state, ratingRange: action.payload.range };
+    },
   },
 });
-export const { addProduct, addProducts, setStatus } = productSlice.actions;
+export const {
+  addProduct,
+  addProducts,
+  setStatus,
+  setSearchQuery,
+  setCategory,
+  setForWhom,
+  setPriceRange,
+  setRatingRange,
+} = productSlice.actions;
 export default productSlice.reducer;
 export function addProductThunk(product) {
   return async function (dispatch) {
@@ -86,3 +116,58 @@ export function getAllProductThunk() {
     dispatch(setStatus({ status: "IDLE" }));
   };
 }
+
+export const filteredProductThunk = (
+  search,
+  category,
+  forWhom,
+  priceRange,
+  ratingRange
+) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      let url = `${process.env.REACT_APP_GET_ALL_PRODUCTS_URL}?`;
+      if (search) url = `${url}keyword=${search}`;
+      if (category.length > 0) url += `&category=${category}`;
+      if (forWhom.length > 0) url += `&forWhom=${forWhom}`;
+      if (priceRange)
+        url += `&price[gte]=${priceRange[0]}&price[lte]=${priceRange[1]}`;
+      if (ratingRange)
+        url += `&ratings[gte]=${ratingRange[0]}&ratings[lte]=${ratingRange[1]}`;
+      console.log(url);
+      const res = await fetch(url, { method: "get" });
+      const data = await res.json();
+      console.log(data);
+      if (!res.ok) throw new Error(data.messsage);
+      dispatch(addProducts({ products: data.products }));
+    } catch (err) {}
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const removeProductThunk = (productId) => {
+  return async function (dispatch) {
+    const toastId = toast.loading("removing product...");
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_PRODUCTS_BASE_URL}/${productId}`,
+        {
+          method: "delete",
+          headers: { "x-auth-token": localStorage.getItem("token") },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.messsage);
+      toast.dismiss(toastId);
+      toast.success(data.message);
+      console.log(data);
+      dispatch(getAllProductThunk());
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error(err.messsage);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};

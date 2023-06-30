@@ -19,10 +19,10 @@ function ProductCard({ product }) {
       } catch (err) {}
     }
     fetchProduct();
-  }, [product._id]);
+  }, [product?._id]);
 
   return (
-    <Link to={`/products/${product._id}`} style={{ textDecoration: "none" }}>
+    <Link to={`/products/${product?._id}`} style={{ textDecoration: "none" }}>
       <div className="card" style={{ width: "18rem" }}>
         <img
           className="card-img-top product_card_img"

@@ -97,6 +97,7 @@ export const getAllProduct = catchAsync(async (req, res, next) => {
     .search();
   const products = await features.query;
   res.status(200).json({
+    results: products.length,
     products,
   });
 });
@@ -199,10 +200,12 @@ export const deleteImageFromProduct = catchAsync(async (req, res, next) => {
 
 export const deleteProduct = catchAsync(async (req, res, next) => {
   let product = await Product.findById(req.params.id);
+  console.log(req.params.id);
   if (!product) return next(new ApiError(404, "product does not exists"));
   await Promise.all(
-    product.images.map((img) => cloudinary.v2.uploader.destroy(img.public_id))
+    product?.images?.map((img) => cloudinary.v2.uploader.destroy(img.public_id))
   );
+  await Product.findByIdAndDelete(req.params.id);
   res.status(200).json({
     message: "product deleted",
   });

@@ -1,0 +1,17 @@
+.remove_product_container {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  justify-content: space-around;
+  padding: 25px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  min-width: 300px;
+}
+.remove_product_container input {
+  border: none;
+  padding: 10px;
+}
+.remove_product_container input:focus {
+  outline: none;
+}

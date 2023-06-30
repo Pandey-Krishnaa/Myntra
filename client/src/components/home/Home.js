@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "./../products/ProductCard";
+import { setCategory, setSearchQuery } from "../../store/productsSlice";
 import "./Home.css";
 function Home() {
   const products = useSelector((state) => state?.products?.products);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setCategory({ category: "" }));
+    dispatch(setSearchQuery({ query: "" }));
+  }, [dispatch]);
   return (
     <div className="home">
       <div className="home_banner">

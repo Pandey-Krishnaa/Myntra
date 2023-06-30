@@ -22,11 +22,12 @@ import { getAllProductThunk } from "./store/productsSlice";
 import ProductDetails from "./components/products/ProductDetails";
 import { loadCart } from "./store/cartSlice";
 import Cart from "./components/cart/Cart";
-import SearchResult from "./components/searchResults/SearchResult";
+
 import OtpVarification from "./components/auth/OtpVarification";
 import ProfileUpdate from "./components/Profile/ProfileUpdate";
 import ChangePassword from "./components/Profile/ChangePassword";
 import ForgetPassword from "./components/Profile/ForgetPassword";
+import RemoveProduct from "./components/admin/RemoveProduct";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -74,10 +75,6 @@ const router = createBrowserRouter([
         path: "bag",
         element: <Cart />,
       },
-      {
-        path: "search/:keyword",
-        element: <SearchResult />,
-      },
     ],
   },
   {
@@ -87,6 +84,7 @@ const router = createBrowserRouter([
       { path: "all-orders", element: <AllOrders /> },
       { path: "add-product", element: <ProductForm /> },
       { path: "products", element: <AllProducts /> },
+      { path: "remove-product", element: <RemoveProduct /> },
     ],
   },
 ]);

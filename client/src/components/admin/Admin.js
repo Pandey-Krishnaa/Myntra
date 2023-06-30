@@ -21,7 +21,9 @@ function Admin() {
                 Add Product
               </Link>
 
-              <Link className="admin_sidebar_links">Remove Product</Link>
+              <Link className="admin_sidebar_links" to="remove-product">
+                Remove Product
+              </Link>
               <Link className="admin_sidebar_links">Update Product</Link>
             </div>
             <div className="admin_sidebar_item admin_sidebar_products">

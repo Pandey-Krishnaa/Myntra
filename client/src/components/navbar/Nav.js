@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../../store/userAuthSlice";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
+import { setSearchQuery } from "../../store/productsSlice";
 const Nav = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [query, setQuery] = useState("");
   const user = useSelector((state) => {
     return state.user;
   });
@@ -26,13 +27,14 @@ const Nav = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (searchQuery.length > 0) navigate(`/search/${searchQuery}`);
+              dispatch(setSearchQuery({ query }));
+              if (query.length > 0) navigate(`/products`);
             }}
           >
             <input
               placeholder="search for product,brand and more"
               onChange={(e) => {
-                setSearchQuery(e.target.value);
+                setQuery(e.target.value);
               }}
             />
             <button type="submit">
