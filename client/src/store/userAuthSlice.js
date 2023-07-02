@@ -161,7 +161,7 @@ export const emailVerificationThunk = (otp, userId) => {
   };
 };
 
-export const sendOtpEmailHandler = (email, purpose) => {
+export const sendOtpEmailHandler = (email, purpose, lockEmailHandler) => {
   // purpose = either {resetPassword} or {emailVerification}
   return async function (dispatch) {
     let toastId = toast.loading("sending email....");
@@ -177,11 +177,13 @@ export const sendOtpEmailHandler = (email, purpose) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
+      lockEmailHandler(true);
       toast.dismiss(toastId);
       toast.success(data.message);
     } catch (err) {
+      lockEmailHandler(false);
       toast.dismiss(toastId);
-      toast.error("something went wrong");
+      toast.error(err.message);
       setError({ err });
     }
 
@@ -189,7 +191,7 @@ export const sendOtpEmailHandler = (email, purpose) => {
   };
 };
 
-export const resetPasswordThunk = (info, email) => {
+export const resetPasswordThunk = (info, email, navigateToLoginPageHandler) => {
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
     const toastId = toast.loading("settingup your new password...");
@@ -210,6 +212,7 @@ export const resetPasswordThunk = (info, email) => {
       if (!res.ok) throw new Error(data.message);
       toast.dismiss(toastId);
       toast.success(data.message);
+      navigateToLoginPageHandler();
     } catch (err) {
       toast.dismiss(toastId);
       toast.error(err.message);

@@ -33,9 +33,17 @@ reviewSchema.statics.calcRatings = async function (productId) {
       },
     },
   ]);
+  console.log(stats);
   const product = await Product.findById(productId);
-  product.ratings = stats[0].avgRating;
-  product.numberOfRatings = stats[0].totalRating;
+  if (stats.length !== 0) {
+    product.ratings = stats[0]?.avgRating;
+    product.numberOfRatings = stats[0].totalRating;
+  } else {
+    product.ratings = 0;
+    product.numberOfRatings = 0;
+  }
+  // console.log(stats);
+
   await product.save();
 };
 reviewSchema.post("save", async function () {

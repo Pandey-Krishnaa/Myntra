@@ -40,7 +40,10 @@ export const deleteReview = catchAsync(async (req, res, next) => {
     req.user.role !== "admin"
   )
     return next(new ApiError(401, "you can't delete this review"));
+  const productId = review.product;
+
   await Review.findByIdAndDelete(req.params.reviewId);
+  await Review.calcRatings(productId);
   res.status(200).json({
     message: "review deleted successfully",
   });

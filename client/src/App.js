@@ -28,6 +28,7 @@ import ProfileUpdate from "./components/Profile/ProfileUpdate";
 import ChangePassword from "./components/Profile/ChangePassword";
 import ForgetPassword from "./components/Profile/ForgetPassword";
 import RemoveProduct from "./components/admin/RemoveProduct";
+import Checkout from "./components/cart/Checkout";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "bag",
         element: <Cart />,
+      },
+      {
+        path: "bag/checkout",
+        element: <Checkout />,
       },
     ],
   },

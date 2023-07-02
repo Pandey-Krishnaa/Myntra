@@ -40,7 +40,7 @@ function Login() {
             LOGIN
           </button>
 
-          <Link to="/forget-passwod" className="forget_password_link">
+          <Link to="/forget" className="forget_password_link">
             Forget Password
           </Link>
           <Link to="/signup" className="forget_password_link">

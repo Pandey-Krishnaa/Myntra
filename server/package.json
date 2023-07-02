@@ -21,6 +21,7 @@
     "mongoose": "^7.2.3",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.3",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "stripe": "^12.11.0"
   }
 }
