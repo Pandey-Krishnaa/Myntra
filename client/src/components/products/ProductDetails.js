@@ -6,9 +6,10 @@ import ReactStar from "react-stars";
 import "./ProductDetails.css";
 import { useDispatch, useSelector } from "react-redux";
 import ReviewCard from "./ReviewCard";
-import { addToCart, loadCart } from "../../store/cartSlice";
 import ReviewModal from "./ReviewModal";
-import { fetchProductThunk, loop } from "../../store/productSlice";
+import { fetchProductThunk } from "../../store/productSlice";
+import { addToCart } from "../../store/cartSlice";
+import { toast } from "react-hot-toast";
 function ProductDetails() {
   const params = useParams();
 
@@ -53,27 +54,41 @@ function ProductDetails() {
           </Carousel>
         </div>
         <div className="product_details">
-          <p>₹{product?.price}*</p>
-          <h1>{product?.name}</h1>
-          <p>{product?.description}</p>
+          <div className="product_details_info">
+            <p className="product_details_price">₹{product?.price}*</p>
+            <h1 className="product_details_name">{product?.name}</h1>
+            <p className="product_details_description">
+              {product?.description}
+            </p>
 
-          <p
-            className={
-              product?.countInStock === 0 ? "out_of_stock" : "in_stock"
-            }
+            <p
+              className={
+                product?.countInStock === 0
+                  ? "out_of_stock product_details_stock"
+                  : "in_stock product_details_stock"
+              }
+            >
+              {product?.countInStock === 0
+                ? "Out of Stock"
+                : `In Stock {${product?.countInStock}}`}
+            </p>
+          </div>
+          <div
+            style={{ padding: "10px 0px" }}
+            className="product_details_ratings"
           >
-            {product?.countInStock === 0
-              ? "Out of Stock"
-              : `In Stock {${product?.countInStock}}`}
-          </p>
-          <ReactStar
-            count={5}
-            value={product?.ratings || 0}
-            color1="gray"
-            edit={false}
-            half={true}
-            size={30}
-          />
+            <ReactStar
+              count={5}
+              value={product?.ratings || 0}
+              color1="gray"
+              edit={false}
+              half={true}
+              size={30}
+            />
+            {product?.reviews?.length > 0 && (
+              <span>({product?.reviews?.length} review)</span>
+            )}
+          </div>
           {userState?.user?.role === "naive" && (
             <>
               <div className="product_quatity_wrapper">
@@ -108,13 +123,9 @@ function ProductDetails() {
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  dispatch(
-                    addToCart({
-                      quantity: productQuantity,
-                      product,
-                    })
-                  );
-                  dispatch(loadCart());
+                  const item = { ...product, quantity: productQuantity };
+                  dispatch(addToCart({ item }));
+                  toast.success("added to cart...");
                 }}
                 className="add_to_cart_btn"
               >
@@ -128,7 +139,6 @@ function ProductDetails() {
                       showReviewModalHandler();
                     }}
                     className="add_to_cart_btn"
-                    style={{ marginLeft: "10px" }}
                   >
                     Write Review
                   </button>

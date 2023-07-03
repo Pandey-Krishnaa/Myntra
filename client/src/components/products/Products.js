@@ -47,7 +47,7 @@ function Products() {
         productState?.ratingRange
       )
     );
-    console.log("useEffe");
+    // console.log("useEffe");
   }, [
     dispatch,
     productState?.category,
@@ -56,9 +56,11 @@ function Products() {
     productState?.priceRange,
     productState?.ratingRange,
   ]);
+
   return (
     <div className="products">
       <div className="products_sidebar">
+        <i className="fa fa-times"></i>
         <button
           className="btn btn-success"
           onClick={(e) => {

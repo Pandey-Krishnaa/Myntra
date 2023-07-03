@@ -2,25 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./ProductCard.css";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, loadCart } from "../../store/cartSlice";
+// import { addToCart, loadCart } from "../../store/cartSlice";
 import toast from "react-hot-toast";
+import { addToCart, loadCart } from "../../store/cartSlice";
 function ProductCard({ product }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const [productDetail, setproductDetail] = useState();
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const res = await fetch(
-          `${process.env.REACT_APP_GET_ALL_PRODUCTS_URL}/${product._id}`
-        );
-        const data = await res.json();
-        setproductDetail(data.product);
-      } catch (err) {}
-    }
-    fetchProduct();
-  }, [product?._id]);
-
   return (
     <Link to={`/products/${product?._id}`} style={{ textDecoration: "none" }}>
       <div className="card" style={{ width: "18rem" }}>
@@ -42,12 +29,10 @@ function ProductCard({ product }) {
             className="product_card_add_to_cart_btn"
             onClick={(e) => {
               e.preventDefault();
-              dispatch(
-                addToCart({
-                  quantity: 1,
-                  product: productDetail,
-                })
-              );
+              const item = { ...product };
+              item.quantity = 1;
+
+              dispatch(addToCart({ item }));
               dispatch(loadCart());
               toast.success("Added To Cart..");
             }}

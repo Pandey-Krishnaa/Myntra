@@ -75,20 +75,6 @@ app.post(
           "product data->",
           checkoutSessionCompleted.object.line_items
         );
-        const session = await stripe.checkout.sessions.retrieve(
-          event.data.object.id
-        );
-
-        // Iterate over the line_items and access the metadata for product information
-        for (const lineItem of session.display_items) {
-          const { product_id, name, description, images } = lineItem.metadata;
-
-          // Use the product information as needed
-          console.log(`Product ID: ${product_id}`);
-          console.log(`Name: ${name}`);
-          console.log(`Description: ${description}`);
-          console.log(`Images: ${images}`);
-        }
 
         response.status(200).json({ message: "payment successfull.........." });
         break;

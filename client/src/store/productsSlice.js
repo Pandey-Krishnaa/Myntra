@@ -10,6 +10,7 @@ const productSlice = createSlice({
     priceRange: [0, 25000],
     ratingRange: [0, 5],
     products: [],
+    featuredProducts: [],
   },
   reducers: {
     setStatus(state, action) {
@@ -43,6 +44,9 @@ const productSlice = createSlice({
     setRatingRange(state, action) {
       return { ...state, ratingRange: action.payload.range };
     },
+    setFeaturedProducts(state, action) {
+      return { ...state, featuredProducts: action.payload.products };
+    },
   },
 });
 export const {
@@ -54,6 +58,7 @@ export const {
   setForWhom,
   setPriceRange,
   setRatingRange,
+  setFeaturedProducts,
 } = productSlice.actions;
 export default productSlice.reducer;
 export function addProductThunk(product) {
@@ -167,6 +172,21 @@ export const removeProductThunk = (productId) => {
     } catch (err) {
       toast.dismiss(toastId);
       toast.error(err.messsage);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const getFeaturedProductsThunk = () => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(process.env.REACT_APP_FEATURED_PRODUCT);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      dispatch(setFeaturedProducts({ products: data.products }));
+    } catch (err) {
+      toast.error(err.message);
     }
     dispatch(setStatus({ status: "IDLE" }));
   };

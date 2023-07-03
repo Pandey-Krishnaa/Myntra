@@ -4,78 +4,54 @@ const slice = createSlice({
   initialState: [],
   reducers: {
     addToCart(state, action) {
-      const cart = localStorage.getItem("cart");
+      let cart = localStorage.getItem("cart");
       if (!cart) {
-        action.payload.product.quantity = action.payload.quantity;
-        localStorage.setItem("cart", JSON.stringify([action.payload.product]));
-        // console.log(cart);
+        cart = [action.payload.item];
+        localStorage.setItem("cart", JSON.stringify([action.payload.item]));
       } else {
-        const data = JSON.parse(localStorage.getItem("cart"));
-        let isPresent = false;
-        for (let i = 0; i < data.length; i++) {
-          if (data[i]._id === action.payload.product._id) {
-            isPresent = true;
-            data[i].quantity =
-              data[i].quantity + action.payload.quantity >
-              action.payload.product.countInStock
-                ? action.payload.product.countInStock
-                : data[i].quantity + action.payload.quantity;
-            console.log(data[i]);
-            break;
-          }
+        cart = JSON.parse(cart);
+        console.log(cart);
+        const data = cart.filter(
+          (item) => item._id === action.payload.item._id
+        );
+        if (data.length === 0) {
+          cart.push(action.payload.item);
         }
-        if (!isPresent) {
-          action.payload.product.quantity = action.payload.quantity;
-          data.push(action.payload.product);
-        }
-        localStorage.setItem("cart", JSON.stringify(data));
+        localStorage.setItem("cart", JSON.stringify(cart));
       }
+      return [...cart];
     },
-    loadCart() {
-      const data = JSON.parse(localStorage.getItem("cart")) || [];
-      return [...data];
-    },
-    removeItemFromCart(state, action) {
-      const data = state.filter((item) => item._id !== action.payload.id);
-      localStorage.setItem("cart", JSON.stringify(data));
-      return [...data];
-    },
-    increaseQuantity(state, action) {
-      const data = JSON.parse(localStorage.getItem("cart")) || [];
-      let el = -1;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i]._id === action.payload.id) {
-          el = i;
+    updateQuantity(state, action) {
+      //   console.log("updating cart");
+      console.log(action.payload);
+      const cart = JSON.parse(localStorage.getItem("cart"));
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i]._id === action.payload.id) {
+          cart[i].quantity = action.payload.quantity;
           break;
         }
       }
-      if (el !== -1 && data[el].quantity < data[el].countInStock) {
-        data[el].quantity += 1;
-      }
-      localStorage.setItem("cart", JSON.stringify(data));
+      localStorage.setItem("cart", JSON.stringify(cart));
+      return [...cart];
     },
-    decreaseQuantity(state, action) {
-      const data = JSON.parse(localStorage.getItem("cart")) || [];
-      let el = -1;
-      for (let i = 0; i < data.length; i++) {
-        if (data[i]._id === action.payload.id) {
-          el = i;
-          break;
-        }
+    loadCart(state) {
+      const cart = localStorage.getItem("cart");
+
+      if (!cart) return [];
+      else {
+        const data = JSON.parse(cart);
+        return [...data];
       }
-      if (el !== -1 && data[el].quantity > 1) {
-        data[el].quantity -= 1;
-      }
-      localStorage.setItem("cart", JSON.stringify(data));
+    },
+    removeItem(state, action) {
+      let cart = JSON.parse(localStorage.getItem("cart"));
+      cart = cart.filter((item) => item._id !== action.payload.id);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      return [...cart];
     },
   },
 });
 
-export const {
-  addToCart,
-  loadCart,
-  removeItemFromCart,
-  increaseQuantity,
-  decreaseQuantity,
-} = slice.actions;
+export const { addToCart, updateQuantity, loadCart, removeItem } =
+  slice.actions;
 export default slice.reducer;

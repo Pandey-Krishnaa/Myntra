@@ -1,49 +1,51 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import CartItem from "./CartItem";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import CartCard from "./CartCard";
 import "./Cart.css";
-
 function Cart() {
-  const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart);
-  let cartTotal = 0;
-
-  cart.forEach((item) => (cartTotal += item.price * item.quantity));
-  const checkoutHandler = async (e) => {
-    e.preventDefault();
-    navigate("/bag/checkout");
-    // const toastId = toast.loading("redirecting you to payment page");
-    // try {
-    //   fetch();
-    // } catch (err) {}
-  };
-  return (
-    <div className="cart_wrapper">
-      {cart.length === 0 && (
-        <>
-          <h1>Cart is Empty</h1>
-          <Link to="/products">Find Something for you</Link>
-        </>
-      )}
-      {cart.map((item) => (
-        <CartItem item={item} />
-      ))}
-      {cart.length > 0 && (
-        <div className="cart_total_feild">
-          <h3>Grand Total : ₹{cartTotal}</h3>
-          <button
-            className="btn btn-success"
-            onClick={(e) => {
-              checkoutHandler(e);
-            }}
-          >
-            Checkout
-          </button>
-        </div>
-      )}
+  const products = useSelector((state) => state.cart);
+  let totalAmount = 0;
+  products?.forEach(
+    (product) => (totalAmount += product?.price * product?.quantity)
+  );
+  return products.length > 0 ? (
+    <div className="cart">
+      <div className="cart_items">
+        {products.map((product) => (
+          <CartCard item={product} />
+        ))}
+      </div>
+      <div className="cart_checkout">
+        <h1>SUMMARY</h1>
+        <h3>Total {products.length} item</h3>
+        <h3>Total Amount : ₹{totalAmount}</h3>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Total Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products?.map((product) => {
+              return (
+                <tr>
+                  <td>{product?.name}</td>
+                  <td>x{product?.quantity}</td>
+                  <td>₹{product?.quantity * product?.price}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <button className="btn btn-success">
+          Secure Your Order By Payment
+        </button>
+      </div>
     </div>
+  ) : (
+    <h1>Cart is empty</h1>
   );
 }
 

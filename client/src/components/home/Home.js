@@ -2,14 +2,13 @@ import React, { useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "./../products/ProductCard";
-import { setCategory, setSearchQuery } from "../../store/productsSlice";
+import { getFeaturedProductsThunk } from "../../store/productsSlice";
 import "./Home.css";
 function Home() {
-  const products = useSelector((state) => state?.products?.products);
+  const products = useSelector((state) => state?.products?.featuredProducts);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setCategory({ category: "" }));
-    dispatch(setSearchQuery({ query: "" }));
+    dispatch(getFeaturedProductsThunk());
   }, [dispatch]);
   return (
     <div className="home">
@@ -22,7 +21,9 @@ function Home() {
           <h1>Promise.</h1>
         </div>
       </div>
-      <h3 style={{ textAlign: "center" }}>Featured Products</h3>
+      <h3 style={{ textAlign: "center", marginTop: "50px" }}>
+        Featured Products
+      </h3>
       <div className="home_products">
         {products?.map((product) => (
           <ProductCard product={product} key={product?._id} />

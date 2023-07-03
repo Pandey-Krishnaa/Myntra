@@ -10,6 +10,7 @@ import {
   getStats,
   updateProductDetails,
 } from "../controllers/productController.js";
+// import catchAsync from "../utils/catchAsync.js";
 const router = Router();
 router
   .route("/")
