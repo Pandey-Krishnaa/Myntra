@@ -44,7 +44,7 @@ export const fetchProductThunk = (productId) => {
     dispatch(setStatus({ status: "LOADING" }));
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_GET_ALL_PRODUCTS_URL}/${productId}`
+        `${process.env.REACT_APP_ROOT_PRODUCT_URL}/${productId}`
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);

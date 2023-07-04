@@ -25,7 +25,7 @@ function OrderDetail() {
 
         const itemsPromises = data.order.items.map((item) =>
           fetch(
-            `${process.env.REACT_APP_PRODUCTS_BASE_URL}/${item.product_id}`,
+            `${process.env.REACT_APP_ROOT_PRODUCT_URL}/${item.product_id}`,
             { method: "get" }
           )
         );
@@ -45,7 +45,7 @@ function OrderDetail() {
       }
     }
     fetchData();
-  }, []);
+  }, [params.orderId]);
 
   return (
     <div className="order_details_wrapper">
@@ -113,6 +113,7 @@ function OrderDetail() {
                   <img
                     src={item?.product?.images[0]?.url}
                     className="order_product_img"
+                    alt={item?.product?.images[0]?.public_id}
                   />
                 </Link>
               </div>

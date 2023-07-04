@@ -79,13 +79,16 @@ export function getUserByTokenThunk() {
     dispatch(setStatus({ status: "LOADING" }));
     try {
       const token = localStorage.getItem("token");
-      const jsonData = await fetch(process.env.REACT_APP_ME_URL, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-      });
+      const jsonData = await fetch(
+        `${process.env.REACT_APP_ROOT_USER_URL}/me`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          },
+        }
+      );
       if (!jsonData.ok) throw new Error("something went wrong");
       const data = await jsonData.json();
       dispatch(setAuth({ isAuthenticated: true }));
@@ -109,7 +112,7 @@ export function signupThunk(user) {
     dispatch(setStatus({ status: "LOADING" }));
     const id = toast.loading("Signing In");
     try {
-      const res = await fetch(process.env.REACT_APP_SIGNUP_URL, {
+      const res = await fetch(`${process.env.REACT_APP_ROOT_USER_URL}/signup`, {
         method: "post",
         body: form,
       });
@@ -136,7 +139,7 @@ export const emailVerificationThunk = (otp, userId) => {
     const toastId = toast.loading("verifying your otp");
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_EMAIL_VARIFICATION}${userId}`,
+        `${process.env.REACT_APP_ROOT_USER_URL}/${userId}`,
         {
           method: "post",
           headers: {
@@ -167,14 +170,17 @@ export const sendOtpEmailHandler = (email, purpose, lockEmailHandler) => {
     let toastId = toast.loading("sending email....");
     dispatch(setStatus({ status: "LOADING" }));
     try {
-      const res = await fetch(`${process.env.REACT_APP_FORGET_PASSWORD_URL}`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({ email, subject: purpose }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_ROOT_USER_URL}/forget-password`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ email, subject: purpose }),
+        }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       lockEmailHandler(true);
@@ -198,7 +204,7 @@ export const resetPasswordThunk = (info, email, navigateToLoginPageHandler) => {
     console.log(`${process.env.REACT_APP_RESET_PASSWORD_URL}${email}`);
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_RESET_PASSWORD_URL}${email}`,
+        `${process.env.REACT_APP_ROOT_USER_URL}/reset-password/${email}`,
         {
           method: "post",
           headers: {
@@ -226,13 +232,16 @@ export function changeProfieThunk(formData) {
     dispatch(setStatus({ status: "LOADING" }));
     const toastId = toast.loading("Updating Profile..");
     try {
-      const res = await fetch(`${process.env.REACT_APP_CHANGE_AVATAR_URL}`, {
-        method: "post",
-        headers: {
-          "x-auth-token": localStorage.getItem("token"),
-        },
-        body: formData,
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_ROOT_USER_URL}/change-avatar`,
+        {
+          method: "post",
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+          },
+          body: formData,
+        }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       dispatch(setUser({ user: data.user }));
@@ -252,7 +261,7 @@ export function updateProfileInfo(info) {
     console.log(info);
     dispatch(setStatus({ status: "LOADING" }));
     try {
-      const res = await fetch(`${process.env.REACT_APP_UPDATE_USER}`, {
+      const res = await fetch(`${process.env.REACT_APP_ROOT_USER_URL}`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -276,17 +285,19 @@ export function updateProfileInfo(info) {
 export const changePasswordThunk = (info, clearFeilds) => {
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
-    console.log(info);
     const toastId = toast.loading("changing password...");
     try {
-      const res = await fetch(process.env.REACT_APP_CHANGE_PASSWORD_URL, {
-        method: "post",
-        headers: {
-          "x-auth-token": localStorage.getItem("token"),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(info),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_ROOT_USER_URL}/change-password`,
+        {
+          method: "post",
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(info),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message);

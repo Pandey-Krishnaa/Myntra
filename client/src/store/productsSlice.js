@@ -109,7 +109,7 @@ export function getAllProductThunk() {
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
     try {
-      const res = await fetch(process.env.REACT_APP_GET_ALL_PRODUCTS_URL, {
+      const res = await fetch(process.env.REACT_APP_ROOT_PRODUCT_URL, {
         method: "get",
       });
       const data = await res.json();
@@ -132,7 +132,7 @@ export const filteredProductThunk = (
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
     try {
-      let url = `${process.env.REACT_APP_GET_ALL_PRODUCTS_URL}?`;
+      let url = `${process.env.REACT_APP_ROOT_PRODUCT_URL}?`;
       if (search) url = `${url}keyword=${search}`;
       if (category.length > 0) url += `&category=${category}`;
       if (forWhom.length > 0) url += `&forWhom=${forWhom}`;
@@ -157,7 +157,7 @@ export const removeProductThunk = (productId) => {
     dispatch(setStatus({ status: "LOADING" }));
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_PRODUCTS_BASE_URL}/${productId}`,
+        `${process.env.REACT_APP_ROOT_PRODUCT_URL}/${productId}`,
         {
           method: "delete",
           headers: { "x-auth-token": localStorage.getItem("token") },

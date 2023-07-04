@@ -71,10 +71,3 @@ export const placeOrderThunk = (body, navigateToPayment) => {
     dispatch(setStatus({ status: "IDLE" }));
   };
 };
-
-export const summurizeOrder = (id) => {
-  return async function (dispatch) {
-    try {
-    } catch (err) {}
-  };
-};
