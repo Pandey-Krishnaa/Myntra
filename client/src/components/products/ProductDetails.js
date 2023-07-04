@@ -7,16 +7,13 @@ import "./ProductDetails.css";
 import { useDispatch, useSelector } from "react-redux";
 import ReviewCard from "./ReviewCard";
 import ReviewModal from "./ReviewModal";
-import { fetchProductThunk } from "../../store/productSlice";
+import { fetchProductThunk, removeProduct } from "../../store/productSlice";
 import { addToCart } from "../../store/cartSlice";
 import { toast } from "react-hot-toast";
 function ProductDetails() {
   const params = useParams();
-
-  const [err, setErr] = useState(null);
   const userState = useSelector((state) => state.user);
   const product = useSelector((state) => state.product.product);
-  const [isValidToWriteReview, setIsValidToWriteReview] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [productQuantity, setProductQuantity] = useState(1);
   const dispatch = useDispatch();
@@ -25,9 +22,12 @@ function ProductDetails() {
   };
   useEffect(() => {
     dispatch(fetchProductThunk(params.id));
-  }, [params]);
+    function cleanup() {
+      dispatch(removeProduct());
+    }
+    return cleanup;
+  }, [params, dispatch]);
 
-  if (err) return <h1>{err.message}</h1>;
   if (!product) return <Loader />;
   return (
     <>
@@ -39,7 +39,7 @@ function ProductDetails() {
             infiniteLoop={true}
             showThumbs={false}
           >
-            {product?.images.map((img) => (
+            {product?.images?.map((img) => (
               <div
                 className="product_carousel_img_wrapper"
                 key={img?.public_id}
@@ -127,46 +127,43 @@ function ProductDetails() {
                   dispatch(addToCart({ item }));
                   toast.success("added to cart...");
                 }}
-                className="add_to_cart_btn"
+                className="add_to_cart_btn "
+                style={{ marginRight: "5px" }}
               >
                 ADD TO CART
               </button>
-              {isValidToWriteReview && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showReviewModalHandler();
-                    }}
-                    className="add_to_cart_btn"
-                  >
-                    Write Review
-                  </button>
-                  {showReviewModal && (
-                    <ReviewModal
-                      onClickHandler={showReviewModalHandler}
-                      product_id={product?._id}
-                    />
-                  )}
-                </>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  showReviewModalHandler();
+                }}
+                className="add_to_cart_btn"
+              >
+                Write Review
+              </button>
+              {showReviewModal && (
+                <ReviewModal
+                  onClickHandler={showReviewModalHandler}
+                  product_id={product?._id}
+                />
               )}
             </>
           )}
         </div>
       </div>
-      {product?.reviews.length > 0 && (
+      {product?.reviews?.length > 0 && (
         <>
           <div className="product_review_wrapper">
             <h3 style={{ textAlign: "center", textDecoration: "underline" }}>
               Reviews
             </h3>
             <div className="product_reviews">
-              {product.reviews.map((review) => {
+              {product?.reviews?.map((review) => {
                 return (
                   <ReviewCard
                     review={review}
-                    key={review._id}
-                    userId={userState.user._id}
+                    key={review?._id}
+                    userId={userState?.user?._id}
                     product_id={product?._id}
                   />
                 );

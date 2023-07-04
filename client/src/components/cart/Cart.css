@@ -1,3 +1,28 @@
+.empty_cart {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://mir-s3-cdn-cf.behance.net/project_modules/disp/aebe8796004039.5ea47d340d7b5.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+}
+.empty_cart_container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff3f6c63;
+}
+.empty_cart_container button {
+  background-color: #ff3f6c;
+}
 .cart {
   display: flex;
   width: 100%;
@@ -32,5 +57,14 @@
   .cart_checkout {
     width: 100%;
     padding: 20px;
+  }
+  .cart_checkout h1 {
+    font-size: 1rem;
+  }
+  .cart_checkout h3 {
+    font-size: 0.6rem;
+  }
+  .table_head {
+    font-size: 1rem;
   }
 }

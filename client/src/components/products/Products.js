@@ -60,7 +60,6 @@ function Products() {
   return (
     <div className="products">
       <div className="products_sidebar">
-        <i className="fa fa-times"></i>
         <button
           className="btn btn-success"
           onClick={(e) => {

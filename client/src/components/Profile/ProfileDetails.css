@@ -1,6 +1,31 @@
-.profile_detail_wrapper tr {
+.profile_detail_wrapper {
   width: 100%;
 }
-.profile_detail_wrapper table .profile_details_record_row {
-  width: 500px;
+.profile_detail_wrapper table {
+  width: 800px;
+  font-size: 1.23rem;
+}
+.profile_avatar {
+  width: 100px;
+}
+
+@media only screen and (max-width: 820px) {
+  .profile_detail_wrapper table {
+    width: 100%;
+  }
+  .profile_avatar {
+    width: 50px;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .profile_detail_wrapper table {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+@media only screen and (max-width: 300px) {
+  .profile_detail_wrapper table {
+    width: 100%;
+    font-size: 8px;
+  }
 }

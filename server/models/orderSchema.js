@@ -1,34 +1,41 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 const orderSchema = new Schema({
-  shippingAddress: {
-    type: String,
-    required: [true, "shipping address is required"],
-  },
-  pincode: {
-    type: Number,
-    required: [true, "pincode is required"],
-  },
-  items: [
-    {
-      type: Schema.Types.ObjectId,
-      required: [true, "product id is required"],
-      ref: "Product",
+  address: {
+    landmark: {
+      type: String,
+      required: [true, "landmark is required"],
     },
-  ],
-  taxAmount: {
-    type: Number,
-    required: [true, "tax amount is required"],
+    district: {
+      type: String,
+      required: [true, "district is required"],
+    },
+    state: {
+      type: String,
+      required: [true, "state is required"],
+    },
   },
-  discount: { type: Number },
+  items: [{ product_id: Schema.Types.ObjectId, quantity: Number }],
   totalAmount: {
     type: Number,
     required: [true, "total amount is reuqi"],
   },
   paymentMethod: {
     type: String,
+    default: "card",
   },
+  paymentStatus: {
+    type: String,
+    enum: ["unpaid", "paid"],
+    default: "unpaid",
+  },
+  orderStatus: {
+    type: String,
+    enum: ["processing", "dispatched", "delivered", "cancelled"],
+    default: "processing",
+  },
+
   customer: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
@@ -37,3 +44,5 @@ const orderSchema = new Schema({
     default: Date.now(),
   },
 });
+
+export default model("Order", orderSchema);

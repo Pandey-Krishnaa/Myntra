@@ -6,89 +6,56 @@ import userRouter from "./routes/userRoutes.js";
 import productRoute from "./routes/productRoutes.js";
 import reviewRoute from "./routes/reviewRoutes.js";
 import paymentRoute from "./routes/paymentRoutes.js";
+import orderRoute from "./routes/orderRoutes.js";
 import fileUpload from "express-fileupload";
 import cloudinary from "cloudinary";
 import cors from "cors";
 import stripe from "stripe";
-
 config({ path: "./utils/config.env" });
-
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const port = process.env.PORT || 8000;
-
-const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
+import Order from "./models/orderSchema.js";
 
 app.post(
   "/stripe/webhook",
-  (request, response, next) => {
-    let rawBody = "";
-    request
-      .on("data", (chunk) => {
-        rawBody += chunk;
-      })
-      .on("end", () => {
-        request.rawBody = rawBody;
-
-        next();
-      });
-  },
+  express.raw({ type: "application/json" }),
   async (request, response) => {
     const sig = request.headers["stripe-signature"];
     let event;
+
     try {
       event = stripeInstance.webhooks.constructEvent(
-        request.rawBody,
+        request.body,
         sig,
         process.env.STRIPE_WEBHOOK_ENDPOINT
       );
-      console.log(event);
     } catch (err) {
-      response.status(400).json({ message: err.message });
+      response.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
+
     // Handle the event
     switch (event.type) {
-      case "checkout.session.async_payment_failed":
-        const checkoutSessionAsyncPaymentFailed = event.data.object;
-        // Then define and call a function to handle the event checkout.session.async_payment_failed
-        console.log("payment failed--> ", checkoutSessionAsyncPaymentFailed);
-        break;
-      case "checkout.session.async_payment_succeeded":
-        const checkoutSessionAsyncPaymentSucceeded = event.data.object;
-        // Then define and call a function to handle the event checkout.session.async_payment_succeeded
-        console.log("success -> ", checkoutSessionAsyncPaymentSucceeded);
-        break;
-      case "checkout.session.completed":
-        const checkoutSessionCompleted = event.data;
-        const sessionWithLineItems =
-          await stripeInstance.checkout.sessions.retrieve(
-            event.data.object.id,
-            {
-              expand: ["line_items"],
-            }
-          );
-        console.log("session->", sessionWithLineItems);
-        const lineItems = sessionWithLineItems.line_items.data;
-
-        console.log("line items->", lineItems);
-        console.log(
-          "product data->",
-          checkoutSessionCompleted.object.line_items
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object;
+        const intentData = await stripeInstance.paymentIntents.retrieve(
+          paymentIntentSucceeded.id
         );
-
-        response.status(200).json({ message: "payment successfull.........." });
+        console.log(intentData);
+        const order = await Order.findById(intentData.metadata.orderId);
+        order.paymentStatus = "paid";
+        await order.save();
         break;
-      case "checkout.session.failed":
-        const checkoutSessionFailed = event.data;
-        console.log("failed-> ", checkoutSessionFailed);
-        response.status(400).json({ message: "payment failed.........." });
-        break;
-      // ... handle other event types
       default:
-        response.json(400).json({ message: "something went wrong" });
+        console.log(`Unhandled event type ${event.type}`);
     }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
   }
 );
+
 app.use(json());
 app.use(fileUpload());
 connectDb();
@@ -102,6 +69,7 @@ app.use(cors());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/review", reviewRoute);
+app.use("/api/v1/orders", orderRoute);
 app.use("/payments", paymentRoute);
 
 // handling the not defined routes
@@ -110,6 +78,7 @@ app.all("*", (req, res, next) => {
 });
 // global error handler
 app.use((err, req, res, next) => {
+  console.log(err);
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "something went wrong";
 

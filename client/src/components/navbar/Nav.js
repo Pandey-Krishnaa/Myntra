@@ -59,7 +59,10 @@ const Nav = () => {
 
             {user?.isAuthenticated && (
               <li>
-                <NavLink to="/profile/overview">Profile</NavLink>
+                <NavLink to="/profile/overview" title="profile">
+                  <i className="fa fa-user" aria-hidden="true"></i>
+                  <span className="mobile_view_nav">Profile</span>
+                </NavLink>
               </li>
             )}
             {user?.isAuthenticated && (
@@ -70,22 +73,28 @@ const Nav = () => {
                     dispatch(removeUser());
                     toast.success("logged out");
                   }}
+                  title="Logout"
                 >
-                  Logout
+                  <i className="fa fa-sign-out" aria-hidden="true"></i>
+                  <span className="mobile_view_nav">Logout</span>
                 </NavLink>
               </li>
             )}
             {user?.user?.role === "naive" && (
               <li>
-                <NavLink to="/bag">
+                <NavLink to="/bag" title="bag">
                   <i className="fa-solid fa-cart-shopping"></i>
+                  <span className="mobile_view_nav">Bag</span>
                 </NavLink>
                 <span>{bag?.length === 0 ? "" : bag?.length}</span>
               </li>
             )}
             {user?.user?.role === "admin" && (
               <li>
-                <NavLink to="/admin">Dashboard</NavLink>
+                <NavLink to="/admin" title="Dashboard">
+                  <i class="fas fa-chart-line-down"></i>
+                  <span className="mobile_view_nav">Dashboard</span>
+                </NavLink>
               </li>
             )}
           </ul>

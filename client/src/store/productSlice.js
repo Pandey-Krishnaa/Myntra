@@ -75,7 +75,6 @@ export const postReviewThunk = (info, product_id, onClickHandler) => {
         }
       );
       const data = await res.json();
-      console.log(data.message);
       if (!res.ok) {
         throw Error(data.message);
       }

@@ -29,6 +29,14 @@ import ForgetPassword from "./components/Profile/ForgetPassword";
 import RemoveProduct from "./components/admin/RemoveProduct";
 // import Checkout from "./components/cart/Checkout";
 import { loadCart } from "./store/cartSlice";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import Payment from "./components/cart/Payment";
+import Orders from "./components/orders/Orders";
+import PlaceOrder from "./components/cart/PlaceOrder";
+import OrderDetail from "./components/orders/OrderDetail";
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +45,22 @@ const router = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <SignUp /> },
+      {
+        path: "/orders",
+        element: <Orders />,
+      },
+      {
+        path: "/orders/:orderId",
+        element: <OrderDetail />,
+      },
+      {
+        path: "place-order",
+        element: <PlaceOrder />,
+      },
+      {
+        path: "place-order/payment/:orderId",
+        element: <Payment />,
+      },
 
       {
         path: "profile",
@@ -76,10 +100,6 @@ const router = createBrowserRouter([
         path: "bag",
         element: <Cart />,
       },
-      // {
-      //   path: "bag/checkout",
-      //   element: <Checkout />,
-      // },
     ],
   },
   {
@@ -101,7 +121,11 @@ function App() {
     dispatch(loadCart());
   }, [dispatch]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <Elements stripe={stripePromise}>
+      <RouterProvider router={router} />
+    </Elements>
+  );
 }
 
 export default App;

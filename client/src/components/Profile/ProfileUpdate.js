@@ -5,11 +5,11 @@ import "./ProfileUpdate.css";
 import { toast } from "react-hot-toast";
 import { updateProfileInfo } from "../../store/userAuthSlice";
 function ProfileUpdate() {
-  const userState = useSelector((state) => state.user);
+  const userState = useSelector((state) => state?.user);
   const dispatch = useDispatch();
   const [editName, setEditName] = useState(true);
   const [name, setName] = useState(userState?.user?.name);
-  const [loading, setLoading] = useState(false);
+  const loading = useSelector((state) => state?.user?.status);
   if (!userState?.isAuthenticated) {
     return <Navigate to="/login" />;
   }

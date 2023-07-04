@@ -7,19 +7,18 @@ import { postReviewThunk } from "../../store/productSlice";
 function ReviewModal({ onClickHandler, product_id }) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const backdropClickHandler = (e) => {
     if (e.target.className === "review_modal_wrapper") onClickHandler();
   };
   const dispatch = useDispatch();
   const reviewSubmitHandler = async (review, rating, onClickHandler) => {
-    setLoading(true);
     const toastId = toast.loading("submitting review");
     console.log(process.env.REACT_APP_REVIEW_ROOT_URL);
     dispatch(
       postReviewThunk({ title: review, rating }, product_id, onClickHandler)
     );
-    setLoading(false);
+
     toast.dismiss(toastId);
   };
   return (

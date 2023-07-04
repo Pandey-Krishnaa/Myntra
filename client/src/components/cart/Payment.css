@@ -1,0 +1,40 @@
+.payment_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.payment_form {
+  width: 70vw;
+}
+.payment_form .address {
+  display: flex;
+  flex-direction: column;
+}
+.payment_form .address input {
+  border: none;
+  padding: 15px 10px;
+  background-color: #f4f4f4;
+  margin: 10px 0;
+}
+.payment_form .card_input {
+  background-color: #f4f4f4;
+  padding: 20px 10px;
+  margin-top: 10px;
+}
+.payment_btn {
+  width: 100%;
+  border: none;
+  margin-top: 20px;
+  padding: 15px 0;
+  background-color: #ff3f6c;
+  color: white;
+}
+
+.payment_btn_disabled {
+  width: 100%;
+  border: none;
+  margin-top: 20px;
+  padding: 15px 0;
+  background-color: gray;
+  color: black;
+}

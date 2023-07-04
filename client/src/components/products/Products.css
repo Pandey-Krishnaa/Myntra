@@ -1,6 +1,6 @@
 .products {
   display: flex;
-  width: 100vw%;
+  width: 100vw;
 }
 
 .products_sidebar {
@@ -27,20 +27,14 @@
   align-items: center;
 }
 @media only screen and (max-width: 800px) {
+  .products {
+    flex-direction: column;
+  }
   .product_wrapper {
-    width: 65%;
+    width: 100%;
   }
   .products_sidebar {
-    width: 35%;
-    padding: 25px;
-  }
-}
-@media only screen and (max-width: 481px) {
-  .product_wrapper {
-    width: 60%;
-  }
-  .products_sidebar {
-    width: 40%;
-    padding: 25px 25px 25px 5px;
+    width: 100%;
+    padding: 50px;
   }
 }

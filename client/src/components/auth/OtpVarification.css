@@ -41,3 +41,9 @@ input[type="number"] {
 .otp_input:focus {
   outline: none;
 }
+@media only screen and (max-width: 600px) {
+  .otp_validation_containers {
+    width: 100vw;
+    height: 100vh;
+  }
+}

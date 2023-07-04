@@ -1,0 +1,79 @@
+.orders_wrapper {
+  width: 100vw;
+  padding: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.table_wrapper {
+  width: 90%;
+  min-height: 70vh;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0px 10px 48px 0px rgba(0, 0, 0, 0.3);
+}
+.order_table {
+  width: 100%;
+}
+.order_wrapper_title {
+  padding-bottom: 20px;
+}
+.mobile_order_id {
+  display: none;
+}
+@media only screen and (max-width: 820px) {
+  .order_table_head {
+    font-size: 1rem;
+  }
+  .table_wrapper {
+    width: 98vw;
+    min-height: 70vh;
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
+@media only screen and (max-width: 650px) {
+  .order_table_head {
+    font-size: 0.8rem;
+  }
+  .desktop_order_id {
+    display: none;
+  }
+  .mobile_order_id {
+    display: block;
+  }
+  .table_wrapper {
+    width: 99vw;
+    min-height: 70vh;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .orders_wrapper {
+    padding: 25px;
+  }
+}
+@media only screen and (max-width: 454px) {
+  .order_table_head {
+    font-size: 0.8rem;
+  }
+
+  .table_wrapper {
+    width: 100vw;
+    min-height: 100vh;
+    padding: 10px;
+    border-radius: 0px;
+  }
+
+  .orders_wrapper {
+    padding: 0px;
+  }
+
+  .order_table {
+    font-size: 0.9rem;
+  }
+}
+@media only screen and (max-width: 375px) {
+  .orders_wrapper {
+    overflow-x: scroll;
+  }
+}
