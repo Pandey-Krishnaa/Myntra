@@ -57,7 +57,7 @@ app.post(
 );
 
 app.use(json());
-app.use(fileUpload());
+app.use(fileUpload({ useTempFiles: true }));
 connectDb();
 
 cloudinary.config({

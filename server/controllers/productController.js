@@ -15,7 +15,6 @@ export const createProduct = catchAsync(async (req, res, next) => {
   if (images.length === 0)
     return next(new ApiError(400, "no images to upload"));
   const validFormats = ["jpg", "jpeg", "png"];
-
   for (let image in images) {
     console.log(images[image]);
     if (images[image].size / 1024 ** 2 > 1.5)
@@ -45,48 +44,18 @@ export const createProduct = catchAsync(async (req, res, next) => {
     forWhom,
     brand,
   });
-
-  const uploadToServerPromises = images.map((image) => {
-    return new Promise((resolve, reject) => {
-      const path = `./uploads/${Date.now()}${image.name}`;
-      image.mv(path, (err) => {
-        if (err) reject(err);
-        else resolve(path);
-      });
-    });
+  const cloudinaryPromises = images.map((image) =>
+    cloudinary.v2.uploader.upload(image.tempFilePath)
+  );
+  const cloudImg = await Promise.all(cloudinaryPromises);
+  const imagesArr = [];
+  cloudImg.forEach((img) => {
+    imagesArr.push({ url: img.secure_url, public_id: img.public_id });
   });
-  Promise.all(uploadToServerPromises)
-    .then((paths) => {
-      const cloudinaryPromises = paths.map((path) => {
-        return new Promise((resolve, reject) => {
-          cloudinary.v2.uploader
-            .upload(path)
-            .then((imageDetails) => {
-              fs.unlink(path, (err) => {
-                if (err) throw err;
-              });
-              resolve(imageDetails);
-            })
-            .catch((err) => reject(err));
-        });
-      });
-      return cloudinaryPromises;
-    })
-    .then((cloudinaryPromises) => {
-      Promise.all(cloudinaryPromises).then((imageDetails) => {
-        imageDetails.forEach((image) => {
-          product.images.push({
-            url: image.secure_url,
-            public_id: image.public_id,
-          });
-        });
+  product.images = imagesArr;
+  await product.save();
 
-        product.save().then(() => {
-          res.status(200).json({ product });
-        });
-      });
-    })
-    .catch((err) => next(new ApiError(400, err.message)));
+  res.status(200).json(product);
 });
 
 export const getAllProduct = catchAsync(async (req, res, next) => {
