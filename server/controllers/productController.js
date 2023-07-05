@@ -5,7 +5,11 @@ import cloudinary from "cloudinary";
 import fs from "fs";
 import User from "./../models/userSchema.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
-
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 export const createProduct = catchAsync(async (req, res, next) => {
   if (!req.files || !req.files.images)
     return next(new ApiError(400, "no images to upload"));
