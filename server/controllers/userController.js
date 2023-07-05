@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import cloudinary from "cloudinary";
 
 export const signup = catchAsync(async (req, res, next) => {
+  console.log("body-------->", req.body);
   const avatar = req.files?.avatar;
   if (!avatar) return next(new ApiError(400, "profile picture is required"));
   const { name, email, password } = req.body;
