@@ -129,29 +129,17 @@ export const addImagesToProduct = catchAsync(async (req, res, next) => {
         )
       );
   }
-  const uploadToServerPromises = images.map((image) => {
-    return new Promise((resolve, reject) => {
-      const path = `./uploads/${Date.now()}${image.name}`;
-      image.mv(path, (err) => {
-        if (err) reject(err);
-        else resolve(path);
-      });
-    });
+  const cloudinaryPromises = images.map((image) =>
+    cloudinary.v2.uploader.upload(image.tempFilePath)
+  );
+
+  const cloudImg = await Promise.all(cloudinaryPromises);
+  const imagesArr = [];
+  cloudImg.forEach((img) => {
+    imagesArr.push({ url: img.secure_url, public_id: img.public_id });
   });
-  const paths = await Promise.all(uploadToServerPromises);
-  const uploadToCloudinaryPromises = paths.map((path) => {
-    return cloudinary.v2.uploader.upload(path);
-  });
-  const uploadedImages = await Promise.all(uploadToCloudinaryPromises);
-  paths.forEach((path) => {
-    fs.unlink(path, (err) => {
-      if (err) return next(new ApiError(500, "Something went wrong"));
-    });
-  });
-  uploadedImages.forEach((img) => {
-    const imgObj = { public_id: img.public_id, url: img.secure_url };
-    product.images.push(imgObj);
-  });
+  product.images = imagesArr;
+
   product = await product.save();
   res.status(200).json(product);
 });

@@ -6,10 +6,8 @@ import jwt from "jsonwebtoken";
 import generateOtp from "../utils/otpGenerator.js";
 import bcrypt from "bcrypt";
 import cloudinary from "cloudinary";
-import fs from "fs";
 
 export const signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const avatar = req.files?.avatar;
   if (!avatar) return next(new ApiError(400, "profile picture is required"));
   const { name, email, password } = req.body;
@@ -19,19 +17,10 @@ export const signup = catchAsync(async (req, res, next) => {
   const encryPassword = await bcrypt.hash(password, 12);
   const user = await User.create({ name, email, password: encryPassword, otp });
   if (avatar) {
-    // console.log(avatar);
-    const path = `./uploads/${Date.now()}${avatar.name}`;
-    avatar.mv(path, (err) => {
-      if (err) throw new Error("file couldn't uploaded");
-    });
-    console.log("uploading");
-    const uploadRes = await cloudinary.v2.uploader.upload(path);
-    console.log(uploadRes);
+    console.log("uploading avatar......");
+    const uploadRes = await cloudinary.v2.uploader.upload(avatar.tempFilePath);
     user.avatar.url = uploadRes.secure_url;
     user.avatar.public_id = uploadRes.public_id;
-    fs.unlink(path, (err) => {
-      if (err) throw new Error("something went wrong");
-    });
   }
   const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/api/v1/user/verification/${user._id}`;
   const options = {
