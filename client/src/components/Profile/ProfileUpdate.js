@@ -61,7 +61,7 @@ function ProfileUpdate() {
         onClick={(e) => {
           submitHandler(e);
         }}
-        disabled={loading}
+        disabled={loading === "LOADING"}
       >
         Update
       </button>
