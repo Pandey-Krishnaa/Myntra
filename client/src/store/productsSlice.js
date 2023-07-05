@@ -23,7 +23,6 @@ const productSlice = createSlice({
       };
     },
     addProducts(state, action) {
-      console.log(action.payload.products);
       return {
         ...state,
         products: [...action.payload.products],

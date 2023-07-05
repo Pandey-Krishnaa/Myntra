@@ -15,6 +15,7 @@ function SignUp() {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state?.user);
   const isLoggedIn = userState?.isAuthenticated;
+  const status = userState?.status;
   const navigate = useNavigate();
   const navigateToVarificationPageHandler = () => {
     console.log("called");
@@ -67,8 +68,12 @@ function SignUp() {
             }}
           />
 
-          <button type="submit" className="signup_btn">
-            signup
+          <button
+            type="submit"
+            className="signup_btn"
+            disabled={status === "LOADING"}
+          >
+            {status === "LOADING" ? "SIGNING IN..." : "SIGN IN"}
           </button>
 
           <Link to="/login" className="login_link">

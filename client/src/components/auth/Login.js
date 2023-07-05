@@ -7,8 +7,8 @@ import "./Login.css";
 function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state?.user?.isAuthenticated);
-  if (isLoggedIn) return <Navigate to="/" />;
+  const { isAuthenticated, status } = useSelector((state) => state?.user);
+  if (isAuthenticated) return <Navigate to="/" />;
   else
     return (
       <div className="login_wrapper">
@@ -36,8 +36,12 @@ function Login() {
             placeholder="Password"
             className="login_input"
           />
-          <button type="submit" className="login_btn">
-            LOGIN
+          <button
+            type="submit"
+            className="login_btn"
+            disabled={status === "LOADING"}
+          >
+            {status === "LOADING" ? "LOGGING IN.." : "LOGIN"}
           </button>
 
           <Link to="/forget" className="forget_password_link">

@@ -28,7 +28,7 @@ function ReviewCard({ review, userId }) {
         />
         <p>{review?.title}</p>
       </main>
-      {review?.author?._id === userId && (
+      {review?.author?._id === userId && userId !== undefined && (
         <div className="review_operations">
           <button
             className="delete_review_btn btn btn-danger"

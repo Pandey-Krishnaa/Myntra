@@ -19,7 +19,6 @@ function OtpVarification() {
   const setTimoutHandlerForShowResendBtn = () => {
     setTimeout(() => {
       setShowResendBtn(true);
-      console.log("button showed");
     }, 30000);
   };
 
@@ -60,7 +59,7 @@ function OtpVarification() {
                 className="btn btn-success my-3"
                 disabled={userState?.status === "LOADING"}
               >
-                Verify
+                {userState?.status === "LOADING" ? "Verifying..." : "Verify"}
               </button>
               <button
                 className="btn btn-primary "

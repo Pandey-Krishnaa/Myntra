@@ -99,7 +99,6 @@ export function getUserByTokenThunk() {
       dispatch(setToken({ token }));
     } catch (err) {
       console.log(err.message);
-      // dispatch(removeUser());
     }
     dispatch(setStatus({ status: "IDLE" }));
   };

@@ -49,17 +49,37 @@ const Nav = () => {
             {!user?.isAuthenticated && (
               <>
                 <li>
-                  <NavLink to="/login">Login</NavLink>
+                  <NavLink
+                    to="/login"
+                    onClick={() => {
+                      setShowMenu(!showMenu);
+                    }}
+                  >
+                    Login
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/signup">SignUp</NavLink>
+                  <NavLink
+                    to="/signup"
+                    onClick={() => {
+                      setShowMenu(!showMenu);
+                    }}
+                  >
+                    SignUp
+                  </NavLink>
                 </li>
               </>
             )}
 
             {user?.isAuthenticated && (
               <li>
-                <NavLink to="/profile/overview" title="profile">
+                <NavLink
+                  to="/profile/overview"
+                  title="profile"
+                  onClick={() => {
+                    setShowMenu(!showMenu);
+                  }}
+                >
                   <i className="fa fa-user" aria-hidden="true"></i>
                   <span className="mobile_view_nav">Profile</span>
                 </NavLink>
@@ -72,6 +92,7 @@ const Nav = () => {
                   onClick={() => {
                     dispatch(removeUser());
                     toast.success("logged out");
+                    setShowMenu(!showMenu);
                   }}
                   title="Logout"
                 >
@@ -82,7 +103,13 @@ const Nav = () => {
             )}
             {user?.user?.role === "naive" && (
               <li>
-                <NavLink to="/bag" title="bag">
+                <NavLink
+                  to="/bag"
+                  title="bag"
+                  onClick={() => {
+                    setShowMenu(!showMenu);
+                  }}
+                >
                   <i className="fa-solid fa-cart-shopping"></i>
                   <span className="mobile_view_nav">Bag</span>
                 </NavLink>
@@ -91,7 +118,13 @@ const Nav = () => {
             )}
             {user?.user?.role === "admin" && (
               <li>
-                <NavLink to="/admin" title="Dashboard">
+                <NavLink
+                  to="/admin"
+                  title="Dashboard"
+                  onClick={() => {
+                    setShowMenu(!showMenu);
+                  }}
+                >
                   Dashboard
                 </NavLink>
               </li>
