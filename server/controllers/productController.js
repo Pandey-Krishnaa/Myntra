@@ -85,7 +85,8 @@ export const createProduct = catchAsync(async (req, res, next) => {
           res.status(200).json({ product });
         });
       });
-    });
+    })
+    .catch((err) => next(new ApiError(400, err.message)));
 });
 
 export const getAllProduct = catchAsync(async (req, res, next) => {
