@@ -15,7 +15,7 @@ function ReviewCard({ review, userId }) {
           src="https://ionicframework.com/docs/img/demos/avatar.svg"
           className="review_card_author_avatar"
         />
-        <h6>{review?.author.name}</h6>
+        <h6>{review?.author?.name}</h6>
       </header>
       <main>
         <ReactStars
@@ -28,13 +28,12 @@ function ReviewCard({ review, userId }) {
         />
         <p>{review?.title}</p>
       </main>
-      {review.author._id === userId && (
+      {review?.author?._id === userId && (
         <div className="review_operations">
           <button
             className="delete_review_btn btn btn-danger"
             onClick={(e) => {
               e.preventDefault();
-              console.log(review);
               dispatch(deleteReviewThunk(review?.product, review?._id));
             }}
           >
