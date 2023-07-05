@@ -143,7 +143,7 @@ export const emailVerificationThunk = (otp, userId) => {
     const toastId = toast.loading("verifying your otp");
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_ROOT_USER_URL}/${userId}`,
+        `${process.env.REACT_APP_ROOT_USER_URL}/verification/${userId}`,
         {
           method: "post",
           headers: {
@@ -205,7 +205,7 @@ export const resetPasswordThunk = (info, email, navigateToLoginPageHandler) => {
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
     const toastId = toast.loading("settingup your new password...");
-    console.log(`${process.env.REACT_APP_RESET_PASSWORD_URL}${email}`);
+
     try {
       const res = await fetch(
         `${process.env.REACT_APP_ROOT_USER_URL}/reset-password/${email}`,
