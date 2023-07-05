@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./PlaceOrder.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { placeOrderThunk } from "../../store/orderSlice";
 import { useNavigate } from "react-router-dom";
 function calculateTotalAmount() {
@@ -38,6 +38,7 @@ function PlaceOrder() {
     const body = { address, items, totalAmount };
     dispatch(placeOrderThunk(body, navigateToPayment));
   };
+  const { status } = useSelector((state) => state.order);
   return (
     <div className="place_order_wrapper">
       {items.length === 0 ? (
@@ -76,7 +77,9 @@ function PlaceOrder() {
                 setUserState(e.target.value);
               }}
             />
-            <button className="place_order_btn">Confirm Order</button>
+            <button className="place_order_btn" disabled={status === "LOADING"}>
+              {status === "LOADING" ? "Placing Order..." : "Place Order"}
+            </button>
           </form>
         </>
       )}
