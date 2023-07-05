@@ -8,7 +8,6 @@ import bcrypt from "bcrypt";
 import cloudinary from "cloudinary";
 
 export const signup = catchAsync(async (req, res, next) => {
-  console.log("body-------->", req.body);
   const avatar = req.files?.avatar;
   if (!avatar) return next(new ApiError(400, "profile picture is required"));
   const { name, email, password } = req.body;
@@ -142,19 +141,10 @@ export const changeAvatar = catchAsync(async (req, res, next) => {
   if (user.avatar?.public_id)
     await cloudinary.v2.uploader.destroy(user.avatar.public_id);
 
-  // uploading new avatar
-  const path = `./uploads/${Date.now()}${avatar.name}`;
-  avatar.mv(path, (err) => {
-    if (err) throw new Error("file couldn't uploaded");
-  });
-  const uploadRes = await cloudinary.v2.uploader.upload(path);
+  const uploadRes = await cloudinary.v2.uploader.upload(avatar?.tempFilePath);
   user.avatar.url = uploadRes.secure_url;
   user.avatar.public_id = uploadRes.public_id;
-  console.log(path);
   user = await user.save();
-  fs.unlink(path, (err) => {
-    if (err) console.log(err.message);
-  });
   res.status(200).json({ message: "avatar uploaded", user });
 });
 
