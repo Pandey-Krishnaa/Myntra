@@ -45,7 +45,7 @@ function ProductDetails() {
                 key={img?.public_id}
               >
                 <img
-                  src={img.url}
+                  src={img?.url}
                   alt={product?.name}
                   className="product_carousel_img"
                 />

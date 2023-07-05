@@ -96,7 +96,6 @@ const router = createBrowserRouter([
       {
         path: "products/:id",
         element: <ProductDetails />,
-        errorElement: <h1>error</h1>,
       },
       {
         path: "bag",
