@@ -48,13 +48,8 @@ export const createProduct = catchAsync(async (req, res, next) => {
   const cloudinaryPromises = images.map((image) =>
     cloudinary.v2.uploader.upload(image.tempFilePath)
   );
-  let cloudImg;
-  try {
-    cloudImg = await Promise.all(cloudinaryPromises);
-    console.log(cloudImg);
-  } catch (err) {
-    console.log("error---->", err.message);
-  }
+
+  const cloudImg = await Promise.all(cloudinaryPromises);
   const imagesArr = [];
   cloudImg.forEach((img) => {
     imagesArr.push({ url: img.secure_url, public_id: img.public_id });
