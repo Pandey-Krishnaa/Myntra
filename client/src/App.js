@@ -35,6 +35,8 @@ import Payment from "./components/cart/Payment";
 import Orders from "./components/orders/Orders";
 import PlaceOrder from "./components/cart/PlaceOrder";
 import OrderDetail from "./components/orders/OrderDetail";
+import UpdateProduct from "./components/admin/UpdateProduct";
+import UpdateProductIdForm from "./components/admin/UpdateProductIdForm";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const router = createBrowserRouter([
@@ -109,6 +111,8 @@ const router = createBrowserRouter([
       { path: "all-orders", element: <AllOrders /> },
       { path: "add-product", element: <ProductForm /> },
       { path: "products", element: <AllProducts /> },
+      { path: "products/update", element: <UpdateProductIdForm /> },
+      { path: "products/update/:productId", element: <UpdateProduct /> },
       { path: "remove-product", element: <RemoveProduct /> },
     ],
   },

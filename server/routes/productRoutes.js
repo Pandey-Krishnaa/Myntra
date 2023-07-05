@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(getProductById)
-  .patch(auth, restrictTo("admin"), updateProductDetails)
+  .post(auth, restrictTo("admin"), updateProductDetails)
   .delete(auth, restrictTo("admin"), deleteProduct);
 router
   .route("/add-product-images/:id")

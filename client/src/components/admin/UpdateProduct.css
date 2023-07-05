@@ -1,0 +1,12 @@
+.update_product_container {
+  width: 100%;
+}
+.update_product_input_wrapper {
+  width: 100%;
+}
+.update_product_input_wrapper input {
+  width: 100%;
+}
+.disabled {
+  background-color: gray;
+}

@@ -61,6 +61,7 @@ export const {
   setFeaturedProducts,
 } = productSlice.actions;
 export default productSlice.reducer;
+
 export function addProductThunk(product) {
   return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
@@ -84,14 +85,13 @@ export function addProductThunk(product) {
         formData.append("images", file);
       });
 
-      const res = await fetch(process.env.REACT_APP_ADD_PRODUCT_URL, {
+      const res = await fetch(process.env.REACT_APP_ROOT_PRODUCT_URL, {
         method: "post",
         headers: {
           "x-auth-token": localStorage.getItem("token"),
         },
         body: formData,
       });
-      console.log(res);
       const data = await res.json();
       console.log(data);
       dispatch(addProduct({ product: data.product }));
@@ -186,6 +186,34 @@ export const getFeaturedProductsThunk = () => {
       if (!res.ok) throw new Error(data.message);
       dispatch(setFeaturedProducts({ products: data.products }));
     } catch (err) {
+      toast.error(err.message);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const updateProductThunk = (id, product) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    const toastId = toast.loading("Updating Product Info...");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_ROOT_PRODUCT_URL}/${id}`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify(product),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.dismiss(toastId);
+      toast.success("product updated...");
+    } catch (err) {
+      toast.dismiss(toastId);
       toast.error(err.message);
     }
     dispatch(setStatus({ status: "IDLE" }));

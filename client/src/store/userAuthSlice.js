@@ -44,17 +44,20 @@ export const { setStatus, setUser, setAuth, removeUser, setToken, setError } =
 export default userAuthSlice.reducer;
 
 export function loginThunk(email, password) {
-  return async function (dispatch, getState) {
+  return async function (dispatch) {
     dispatch(setStatus({ status: "LOADING" }));
     const toastId = toast.loading("LOGGING IN...");
     try {
-      const jsonData = await fetch(process.env.REACT_APP_LOGIN_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const jsonData = await fetch(
+        `${process.env.REACT_APP_ROOT_USER_URL}/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
       const data = await jsonData.json();
 
       if (!jsonData.ok) throw new Error(data.message);
@@ -112,6 +115,7 @@ export function signupThunk(user) {
     dispatch(setStatus({ status: "LOADING" }));
     const id = toast.loading("Signing In");
     try {
+      console.log(`${process.env.REACT_APP_ROOT_USER_URL}/signup`);
       const res = await fetch(`${process.env.REACT_APP_ROOT_USER_URL}/signup`, {
         method: "post",
         body: form,

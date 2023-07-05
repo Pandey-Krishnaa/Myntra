@@ -34,7 +34,7 @@ export const createProduct = catchAsync(async (req, res, next) => {
         )
       );
   }
-  const { name, description, price, category, countInStock, forWhom } =
+  const { name, description, price, category, countInStock, forWhom, brand } =
     req.body;
   const product = await Product.create({
     name,
@@ -43,6 +43,7 @@ export const createProduct = catchAsync(async (req, res, next) => {
     category,
     countInStock,
     forWhom,
+    brand,
   });
 
   const uploadToServerPromises = images.map((image) => {
@@ -125,6 +126,7 @@ export const updateProductDetails = catchAsync(async (req, res, next) => {
   product.price = req.body.price || product.price;
   product.category = req.body.category || product.category;
   product.countInStock = req.body.countInStock || product.countInStock;
+  product.brand = req.body.brand || product.brand;
   product = await product.save();
   res.status(200).json({ product });
 });

@@ -14,7 +14,7 @@ function ProductForm() {
     category: PRODUCT_CATEGORIES[0],
     images: null,
   });
-  const productState = useSelector((state) => state.product);
+  const productState = useSelector((state) => state.products);
   const diabledClass = productState.status === "LOADING" ? "disabled" : "";
   const dispatch = useDispatch();
   return (

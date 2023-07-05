@@ -92,8 +92,7 @@ const Nav = () => {
             {user?.user?.role === "admin" && (
               <li>
                 <NavLink to="/admin" title="Dashboard">
-                  <i class="fas fa-chart-line-down"></i>
-                  <span className="mobile_view_nav">Dashboard</span>
+                  Dashboard
                 </NavLink>
               </li>
             )}
