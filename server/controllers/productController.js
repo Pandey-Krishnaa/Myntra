@@ -5,11 +5,7 @@ import cloudinary from "cloudinary";
 import fs from "fs";
 import User from "./../models/userSchema.js";
 import ApiFeatures from "../utils/ApiFeatures.js";
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
-});
+
 export const createProduct = catchAsync(async (req, res, next) => {
   if (!req.files || !req.files.images)
     return next(new ApiError(400, "no images to upload"));
@@ -48,12 +44,9 @@ export const createProduct = catchAsync(async (req, res, next) => {
     forWhom,
     brand,
   });
-  console.log("api key------>", process.env.CLOUDINARY_API_KEY);
+  // console.log("api key------>", process.env.CLOUDINARY_API_KEY);
   const cloudinaryPromises = images.map((image) =>
-    cloudinary.v2.uploader.upload(image.tempFilePath, {
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_SECRET,
-    })
+    cloudinary.v2.uploader.upload(image.tempFilePath)
   );
   let cloudImg;
   try {
@@ -62,7 +55,6 @@ export const createProduct = catchAsync(async (req, res, next) => {
   } catch (err) {
     console.log("error---->", err.message);
   }
-  console.log("uploaded");
   // const imagesArr = [];
   // cloudImg.forEach((img) => {
   //   imagesArr.push({ url: img.secure_url, public_id: img.public_id });
