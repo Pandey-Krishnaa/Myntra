@@ -48,17 +48,17 @@ export const createProduct = catchAsync(async (req, res, next) => {
     forWhom,
     brand,
   });
-  // const cloudinaryPromises = images.map((image) =>
-  //   cloudinary.v2.uploader.upload(image.tempFilePath)
-  // );
-  // let cloudImg;
-  // try {
-  //   cloudImg = await Promise.all(cloudinaryPromises);
-  //   console.log(cloudImg);
-  // } catch (err) {
-  //   console.log("error---->", err.message);
-  // }
-  // console.log("uploaded");
+  const cloudinaryPromises = images.map((image) =>
+    cloudinary.v2.uploader.upload(image.tempFilePath)
+  );
+  let cloudImg;
+  try {
+    cloudImg = await Promise.all(cloudinaryPromises);
+    console.log(cloudImg);
+  } catch (err) {
+    console.log("error---->", err.message);
+  }
+  console.log("uploaded");
   // const imagesArr = [];
   // cloudImg.forEach((img) => {
   //   imagesArr.push({ url: img.secure_url, public_id: img.public_id });
