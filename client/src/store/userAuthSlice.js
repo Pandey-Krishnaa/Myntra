@@ -119,7 +119,7 @@ export function signupThunk(user) {
       const res = await fetch(`${process.env.REACT_APP_ROOT_USER_URL}/signup`, {
         method: "post",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         body: form,
       });
