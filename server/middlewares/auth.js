@@ -15,14 +15,20 @@ const auth = async (req, res, next) => {
   next();
 };
 export const restrictTo = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role))
-      return next(new ApiError(401, "you can't access this route"));
-    if (!req.user.isEmailVarified)
-      return next(
-        new ApiError(400, "your email is not varified,go and verify it")
-      );
-    next();
+  return async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) return next(new ApiError(404, "user does not exists"));
+      if (!roles.includes(user.role))
+        return next(new ApiError(401, "you can't access this route"));
+      if (!user.isEmailVarified)
+        return next(
+          new ApiError(400, "your email is not varified,go and verify it")
+        );
+      next();
+    } catch (err) {
+      return next(new ApiError(400, err.message));
+    }
   };
 };
 export default auth;

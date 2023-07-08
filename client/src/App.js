@@ -108,6 +108,7 @@ const router = createBrowserRouter([
     element: <Admin />,
     children: [
       { path: "all-orders", element: <AllOrders /> },
+      { path: "all-orders/order/:orderId", element: <OrderDetail /> },
       { path: "add-product", element: <ProductForm /> },
       { path: "products", element: <AllProducts /> },
       { path: "products/update", element: <UpdateProductIdForm /> },

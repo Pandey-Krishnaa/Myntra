@@ -9,3 +9,8 @@
   text-align: center;
   /* margin: 20px 10px; */
 }
+.product_id_copy_btn {
+  border: none;
+  background-color: transparent;
+  padding: 10px;
+}

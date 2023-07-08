@@ -47,3 +47,42 @@ export const detailedOrderData = catchAsync(async (req, res, next) => {
     data,
   });
 });
+
+export const getAllOrders = catchAsync(async (req, res, next) => {
+  const orders = await Order.find().sort("-createdAt");
+  res.status(200).json({ totalOrders: orders.length, orders });
+});
+
+export const updateOrderStatus = catchAsync(async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const status = req.body.orderStatus;
+  const order = await Order.findById(orderId);
+  if (!order) return next(new ApiError(404, "order does not exists"));
+  const validStatus = ["dispatched", "delivered", "cancelled"];
+  if (!validStatus.includes(status))
+    return next(new ApiError(400, "invalid status"));
+  if (order.orderStatus === "delivered" || order.orderStatus === "cancelled")
+    return next(
+      new ApiError(
+        400,
+        `order has ${order.orderStatus} now the status can't be update`
+      )
+    );
+  if (order.orderStatus === status)
+    return next(new ApiError(400, `order has already ${status}`));
+
+  if (status === "dispatched") {
+    const productsPromises = order.items.map((item) =>
+      Product.findById(item.product_id)
+    );
+    const products = await Promise.all(productsPromises);
+    const productPromises = products.map((product, i) => {
+      product.countInStock -= order.items[i].quantity;
+      product.save();
+    });
+    await Promise.all(productPromises);
+  }
+  order.orderStatus = status;
+  await order.save();
+  res.status(200).json({ order });
+});

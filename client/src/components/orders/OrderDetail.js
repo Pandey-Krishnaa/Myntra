@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Moment from "react-moment";
+import { useSelector } from "react-redux";
 import "./OrderDetail.css";
 function OrderDetail() {
   const params = useParams();
   const [data, setData] = useState(null);
   const [items, setItems] = useState([]);
-
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -103,6 +104,9 @@ function OrderDetail() {
               </tr>
             </tbody>
           </table>
+          {user?.role === "admin" && (
+            <div className="update_order_section">Admin</div>
+          )}
         </div>
 
         <div className="items">

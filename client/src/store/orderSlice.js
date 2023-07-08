@@ -5,6 +5,7 @@ const slice = createSlice({
   initialState: {
     status: "IDLE",
     orders: [],
+    allOrders: [],
   },
   reducers: {
     setOrders(state, action) {
@@ -13,10 +14,13 @@ const slice = createSlice({
     setStatus(state, action) {
       return { ...state, status: action.payload.status };
     },
+    setAllOrders(state, action) {
+      return { ...state, allOrders: action.payload.orders };
+    },
   },
 });
 
-export const { setOrders, setStatus } = slice.actions;
+export const { setOrders, setStatus, setAllOrders } = slice.actions;
 export default slice.reducer;
 
 export const getMyOrdersThunk = () => {
@@ -66,6 +70,30 @@ export const placeOrderThunk = (body, navigateToPayment) => {
       navigateToPayment(data.order._id);
     } catch (err) {
       toast.dismiss(toastId);
+      toast.error(err.message);
+    }
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
+
+export const getAllOrderAdminThunk = () => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_ORDER_URL}/get-all-orders`,
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "something went wrong");
+      dispatch(setAllOrders({ orders: data.orders }));
+    } catch (err) {
       toast.error(err.message);
     }
     dispatch(setStatus({ status: "IDLE" }));

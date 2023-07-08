@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProductThunk } from "../../store/productsSlice";
 import { Link } from "react-router-dom";
 import "./AllProducts.css";
+import { toast } from "react-hot-toast";
 function AllProducts() {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -28,6 +29,16 @@ function AllProducts() {
               <td className="product_cells">{i + 1}</td>
               <td>
                 <Link to={`/products/${product._id}`}>{product._id}</Link>
+                <button
+                  className="product_id_copy_btn"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigator.clipboard.writeText(product._id);
+                    toast.success("product id copied...");
+                  }}
+                >
+                  <i class="fa-solid fa-clipboard"></i>
+                </button>
               </td>
               <td>{product.name}</td>
               <td className="product_cells">{product.price}</td>
