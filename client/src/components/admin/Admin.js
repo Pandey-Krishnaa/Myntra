@@ -33,7 +33,6 @@ function Admin() {
               <Link className="admin_sidebar_links" to="all-orders">
                 All Orders
               </Link>
-              <Link className="admin_sidebar_links">Update Order</Link>
             </div>
           </div>
           <div className="admin_main">{<Outlet />}</div>

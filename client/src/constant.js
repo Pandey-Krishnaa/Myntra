@@ -5,3 +5,9 @@ export const PRODUCT_CATEGORIES = [
   "footwear",
 ];
 export const FOR_WHOM = ["men", "woman", "kid"];
+export const ORDER_STATUS = [
+  "processing",
+  "dispatched",
+  "delivered",
+  "cancelled",
+];

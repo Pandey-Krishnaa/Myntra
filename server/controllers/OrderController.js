@@ -54,6 +54,7 @@ export const getAllOrders = catchAsync(async (req, res, next) => {
 });
 
 export const updateOrderStatus = catchAsync(async (req, res, next) => {
+  // console.log(req.body);
   const orderId = req.params.orderId;
   const status = req.body.orderStatus;
   const order = await Order.findById(orderId);
@@ -71,7 +72,7 @@ export const updateOrderStatus = catchAsync(async (req, res, next) => {
   if (order.orderStatus === status)
     return next(new ApiError(400, `order has already ${status}`));
 
-  if (status === "dispatched") {
+  if (order.orderStatus === "processing") {
     const productsPromises = order.items.map((item) =>
       Product.findById(item.product_id)
     );

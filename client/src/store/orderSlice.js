@@ -99,3 +99,30 @@ export const getAllOrderAdminThunk = () => {
     dispatch(setStatus({ status: "IDLE" }));
   };
 };
+
+export const updateOrderStatusThunk = (orderId, orderStatus) => {
+  return async function (dispatch) {
+    dispatch(setStatus({ status: "LOADING" }));
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_ORDER_URL}/update-order-status/${orderId}`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ orderStatus }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "something went wrong");
+      dispatch(getAllOrderAdminThunk());
+      toast.success("order updated successfully...");
+    } catch (err) {
+      toast.error(err.message);
+    }
+
+    dispatch(setStatus({ status: "IDLE" }));
+  };
+};
