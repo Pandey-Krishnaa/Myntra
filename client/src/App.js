@@ -18,7 +18,10 @@ import ProductForm from "./components/admin/ProductForm";
 import AllProducts from "./components/admin/AllProducts";
 
 import Products from "./components/products/Products";
-import { getAllProductThunk } from "./store/productsSlice";
+import {
+  getAllProductThunk,
+  getFeaturedProductsThunk,
+} from "./store/productsSlice";
 import ProductDetails from "./components/products/ProductDetails";
 import Cart from "./components/cart/Cart";
 
@@ -122,6 +125,7 @@ function App() {
   useEffect(() => {
     dispatch(getUserByTokenThunk());
     dispatch(getAllProductThunk());
+    dispatch(getFeaturedProductsThunk());
     dispatch(loadCart());
   }, [dispatch]);
 
