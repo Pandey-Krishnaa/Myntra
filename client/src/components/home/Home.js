@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "./../products/ProductCard";
 import { getFeaturedProductsThunk } from "../../store/productsSlice";
 import "./Home.css";
+import Loader from "../Loader";
 function Home() {
+  const status = useSelector((state) => state.products?.status);
   const products = useSelector((state) => state?.products?.featuredProducts);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -21,14 +23,20 @@ function Home() {
           <h1>Promise.</h1>
         </div>
       </div>
-      <h3 style={{ textAlign: "center", marginTop: "50px" }}>
-        Featured Products
-      </h3>
-      <div className="home_products">
-        {products?.map((product) => (
-          <ProductCard product={product} key={product?._id} />
-        ))}
-      </div>
+      {status === "LOADING" ? (
+        <Loader />
+      ) : (
+        <>
+          <h3 style={{ textAlign: "center", marginTop: "50px" }}>
+            Featured Products
+          </h3>
+          <div className="home_products">
+            {products?.map((product) => (
+              <ProductCard product={product} key={product?._id} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
