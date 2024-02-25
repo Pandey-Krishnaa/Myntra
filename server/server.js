@@ -58,7 +58,7 @@ app.post(
 
 app.use(json());
 app.use(fileUpload({ useTempFiles: true }));
-connectDb();
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -86,6 +86,7 @@ app.use((err, req, res, next) => {
     message: err.message,
   });
 });
-app.listen(port, () => {
+app.listen(port, async () => {
+  await connectDb();
   console.log(`app is running on port ${port}`);
 });
